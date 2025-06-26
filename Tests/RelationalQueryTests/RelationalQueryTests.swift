@@ -11,18 +11,19 @@ final class LinkTests: XCTestCase {
         let query = RelationalQuery(
             table: "person",
             fields: [.renaming("name", to: "surname"), .field("prename")],
-            condition: one {
-                compare(field: "prename", withValue: "Bert")
-                compare(field: "prename", withTemplate: "C*", wildcard: "*")
-                all {
-                    compare(field: "name", withPotentialTemplate: "D*", usingWildcard: "*")
-                    if checkSurnameEndForD {
-                        compare(field: "name", withPotentialTemplate: "*n", usingWildcard: "*")
+            condition:
+                one {
+                    compare(field: "prename", withValue: "Bert")
+                    compare(field: "prename", withTemplate: "C*", wildcard: "*")
+                    all {
+                        compare(field: "name", withPotentialTemplate: "D*", usingWildcard: "*")
+                        if checkSurnameEndForD {
+                            compare(field: "name", withPotentialTemplate: "*n", usingWildcard: "*")
+                        }
+                        compare(field: "prename", withPotentialTemplate: "Ernie", usingWildcard: "*")
                     }
-                    compare(field: "prename", withPotentialTemplate: "Ernie", usingWildcard: "*")
-                }
-            },
-            orderBy: [.field("name"), .withDirection("prename", .descending)]
+                },
+            orderBy: [.field("name"), .fieldWithDirection("prename", .descending)]
         )
         
         XCTAssertEqual(

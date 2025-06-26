@@ -12,7 +12,7 @@ public enum RelationalQueryOrderDirection {
 
 public enum RelationalQueryResultOrder {
     case field(_ name: String)
-    case withDirection(_ name: String, _ direction: RelationalQueryOrderDirection)
+    case fieldWithDirection(_ name: String, _ direction: RelationalQueryOrderDirection)
 }
 
 public indirect enum RelationalQueryCondition {

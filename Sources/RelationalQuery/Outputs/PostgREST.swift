@@ -33,7 +33,7 @@ extension RelationalQueryResultOrder: PostgRESTConvertible {
         switch self {
         case .field(let name):
             name.urlEscaped
-        case .withDirection(let name, let direction):
+        case .fieldWithDirection(let name, let direction):
             "\(name.urlEscaped).\(direction.postgrest)"
         }
     }

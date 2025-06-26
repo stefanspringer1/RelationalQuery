@@ -34,7 +34,7 @@ extension RelationalQueryResultOrder: SQLConvertible {
         switch self {
         case .field(let name):
             name.asSQLName
-        case .withDirection(let name, let direction):
+        case .fieldWithDirection(let name, let direction):
             "\(name.asSQLName) \(direction.sql)"
         }
     }
