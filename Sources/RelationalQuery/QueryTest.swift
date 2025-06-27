@@ -13,7 +13,7 @@ public struct RelationalQueryTestResult: CustomStringConvertible {
         var lines = [String]()
         lines.append("[")
         for row in rows {
-            lines.append("    [" + row.map{ "\($0.0): \($0.1?.prepending("\"").appending("\"") ?? "null")" }.joined(separator: ", ") + "]")
+            lines.append("    (" + row.map{ "\($0.0): \($0.1?.prepending("\"").appending("\"") ?? "null")" }.joined(separator: ", ") + ")")
         }
         lines.append("]")
         return lines.joined(separator: "\n")
@@ -60,10 +60,12 @@ public extension RelationalQueryResultOrder {
         let orderFactor: Int
         switch self {
         case .field(let name):
-            value1 = row1[name]; value2 = row1[name]
+            value1 = row1[name]
+            value2 = row2[name]
             orderFactor = 1
         case .fieldWithDirection(let name, let direction):
-            value1 = row1[name]; value2 = row1[name]
+            value1 = row1[name]
+            value2 = row2[name]
             orderFactor = switch direction {
             case .ascending: 1
             case .descending: -1
@@ -73,9 +75,9 @@ public extension RelationalQueryResultOrder {
         if value1 == value2 {
             return 0
         } else if value1 < value2 {
-            return orderFactor
-        } else {
             return -orderFactor
+        } else {
+            return orderFactor
         }
     }
     
@@ -93,7 +95,7 @@ public extension RelationalQuery {
         }
         if let order = self.order {
             filteredAndSorted.sort { row1, row2 in
-                order.lazy.map { $0.compare(row1, with: row2) }.filter{ $0 != 0 }.first != 1
+                return order.lazy.map { $0.compare(row1, with: row2) }.filter{ $0 != 0 }.first != 1
             }
         }
         var result = [RelationalQueryTestResultRow]()
