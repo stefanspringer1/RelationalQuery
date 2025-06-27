@@ -4,7 +4,7 @@ This package allows to construct relational database queries of a simple form in
 
 This library is published under the Apache License v2.0 with Runtime Library Exception.
 
-# Abstract queries
+## Abstract queries
 
 Example:
 
@@ -47,7 +47,7 @@ person?select=surname:name,prename&or=(prename.eq.Bert,prename.like.C*,and=(name
 
 New output formats can easily be added, see the extensions for `SQLConvertible` and `PostgRESTConvertible`.
 
-# Tests
+## Tests
 
 For testing a query, a simple test database (with values only as text) can be formulated as follows:
 
