@@ -109,7 +109,7 @@ public extension RelationalQueryResultOrder {
 
 public extension RelationalQuery {
     
-    func excute(forTestDatabase testDB: RelationalQueryTestDB) -> RelationalQueryTestResult {
+    func execute(forTestDatabase testDB: RelationalQueryTestDB) -> RelationalQueryTestResult {
         guard let (orinalFieldNames,allRows) = testDB[self.table] else { return RelationalQueryTestResult(fields: [String]()) }
         var filteredAndSorted: [RelationalQueryTestDBRow]
         if let condition = self.condition {

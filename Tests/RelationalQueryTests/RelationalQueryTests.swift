@@ -91,7 +91,7 @@ final class LinkTests: XCTestCase {
             orderBy: [.field("name"), .fieldWithDirection("prename", .descending)]
         )
         
-        let result = query.excute(forTestDatabase: testDB)
+        let result = query.execute(forTestDatabase: testDB)
         
         XCTAssertEqual(
             result.description,
