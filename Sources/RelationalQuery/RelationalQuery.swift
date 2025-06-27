@@ -26,7 +26,7 @@ public func compare(field: String, withValue value: String) -> RelationalQueryCo
     .equal(field: field, value: value)
 }
 
-public func compare(field: String, withTemplate template: String, wildcard: String) -> RelationalQueryCondition {
+public func compare(field: String, withTemplate template: String, usingWildcard wildcard: String) -> RelationalQueryCondition {
     .similar(field: field, template: template, wildcard: wildcard)
 }
 

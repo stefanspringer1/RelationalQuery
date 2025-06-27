@@ -16,7 +16,7 @@ let query = RelationalQuery(
     fields: [.renaming("name", to: "surname"), .field("prename")],
     condition: one {
         compare(field: "prename", withValue: "Bert")
-        compare(field: "prename", withTemplate: "C*", wildcard: "*")
+        compare(field: "prename", withTemplate: "C*", usingWildcard: "*")
         all {
             compare(field: "name", withPotentialTemplate: "D*", usingWildcard: "*")
             if checkSurnameEndForD {
@@ -87,8 +87,8 @@ let query = RelationalQuery(
     table: "person",
     fields: [.renaming("name", to: "surname"), .field("prename")],
     condition: one {
-        compare(field: "prename", withTemplate: "*o*", wildcard: "*")
-        compare(field: "name", withTemplate: "*o*", wildcard: "*")
+        compare(field: "prename", withTemplate: "*o*", usingWildcard: "*")
+        compare(field: "name", withTemplate: "*o*", usingWildcard: "*")
     },
     orderBy: [.field("name"), .fieldWithDirection("prename", .descending)]
 )
