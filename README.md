@@ -80,7 +80,7 @@ let testDB: RelationalQueryTestDB = [
 ]
 ```
 
-With e.g. the following an abstract query:
+With e.g. the following abstract query:
 
 ```swift
 let query = RelationalQuery(
