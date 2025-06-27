@@ -45,9 +45,9 @@ extension RelationalQueryCondition: PostgRESTConvertible {
     public var postgrest: String {
         switch self {
         case .equal(let field, let value):
-            "\(field.urlEscaped).eq.\(value.urlEscaped)"
+            "\(field.urlEscaped)=eq.\(value.urlEscaped)"
         case .similar(field: let field, template: let value, wildcard: let wildcard):
-            "\(field.urlEscaped).like.\(value.replacing(wildcard, with: "*").urlEscaped)"
+            "\(field.urlEscaped)=like.\(value.replacing(wildcard, with: "*").urlEscaped)"
         case .and(let conditions):
             "and=(\(conditions.map{ $0.postgrest }.joined(separator: ",")))"
         case .or(let conditions):

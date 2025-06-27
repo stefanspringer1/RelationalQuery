@@ -32,7 +32,7 @@ final class LinkTests: XCTestCase {
         
         XCTAssertEqual(
             query.postgrest,
-            #"person?select=surname:name,prename&or=(prename.eq.Bert,prename.like.C*,and=(name.like.D*,name.like.*n,prename.eq.Ernie))&order=name,prename.desc"#
+            #"person?select=surname:name,prename&or=(prename=eq.Bert,prename=like.C*,and=(name=like.D*,name=like.*n,prename=eq.Ernie))&order=name,prename.desc"#
         )
     }
     
@@ -40,6 +40,7 @@ final class LinkTests: XCTestCase {
         
         let row1: RelationalQueryTestDBRow = ["prename": "Wallace", "name": "Portillo"]
         let row2: RelationalQueryTestDBRow = ["prename": "Gwen", "name": "Todd"]
+        
         
         // sorting along "name":
         XCTAssertEqual(RelationalQueryResultOrder.field("prename").compare(row1, with: row2), 1)
