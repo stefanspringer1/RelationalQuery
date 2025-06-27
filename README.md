@@ -103,7 +103,7 @@ print(result)
 
 (In a unit test, compare `result.description` to the expected text.)
 
-The following is then printed:
+The following is printed:
 
 ```text
 surname   | prename 
