@@ -32,7 +32,7 @@ final class LinkTests: XCTestCase {
         
         XCTAssertEqual(
             query.postgrest,
-            #"person?select=surname:name,prename&or=(prename=eq.Bert,prename=like.C*,and=(name=like.D*,name=like.*n,prename=eq.Ernie))&order=name,prename.desc"#
+            #"person?select=surname:name,prename&or=(prename.eq.Bert,prename.like.C*,and(name.like.D*,name.like.*n,prename.eq.Ernie))&order=name,prename.desc"#
         )
     }
     

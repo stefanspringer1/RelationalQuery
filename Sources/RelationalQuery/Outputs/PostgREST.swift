@@ -43,15 +43,19 @@ extension RelationalQueryResultOrder: PostgRESTConvertible {
 extension RelationalQueryCondition: PostgRESTConvertible {
     
     public var postgrest: String {
+        postgrest(topLevel: true)
+    }
+    
+    public func postgrest(topLevel: Bool) -> String {
         switch self {
         case .equal(let field, let value):
-            "\(field.urlEscaped)=eq.\(value.urlEscaped)"
+            "\(field.urlEscaped)\(topLevel ? "=" : ".")eq.\(value.urlEscaped)"
         case .similar(field: let field, template: let value, wildcard: let wildcard):
-            "\(field.urlEscaped)=like.\(value.replacing(wildcard, with: "*").urlEscaped)"
+            "\(field.urlEscaped)\(topLevel ? "=" : ".")like.\(value.replacing(wildcard, with: "*").urlEscaped)"
         case .and(let conditions):
-            "and=(\(conditions.map{ $0.postgrest }.joined(separator: ",")))"
+            "and\(topLevel ? "=" : "")(\(conditions.map{ $0.postgrest(topLevel: false) }.joined(separator: ",")))"
         case .or(let conditions):
-            "or=(\(conditions.map{ $0.postgrest }.joined(separator: ",")))"
+            "or\(topLevel ? "=" : "")(\(conditions.map{ $0.postgrest(topLevel: false) }.joined(separator: ",")))"
         }
     }
     
