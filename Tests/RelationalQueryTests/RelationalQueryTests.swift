@@ -55,27 +55,30 @@ final class LinkTests: XCTestCase {
     func testQueryTest() throws {
         
         let testDB: RelationalQueryTestDB = [
-            "person": [
-                ["prename": "Gwen", "name": "Portillo"], 
-                ["prename": "Wallace", "name": "Todd"], 
-                ["prename": "Zariah", "name": "Curtis"], 
-                ["prename": "Muhammad", "name": "Avery"], 
-                ["prename": "Ahmad", "name": "Johnson"], 
-                ["prename": "Taylor", "name": "Hodges"],
-                ["prename": "Emma", "name": "Hodges"], 
-                ["prename": "Kaydence", "name": "McClain"], 
-                ["prename": "Marleigh", "name": "Holland"], 
-                ["prename": "Brady", "name": "Brandt"], 
-                ["prename": "Loretta", "name": "Mejia"], 
-                ["prename": "Alayah", "name": "McGee"], 
-                ["prename": "Wallace", "name": "Weber"], 
-                ["prename": "Loretta", "name": "Schneider"], 
-                ["prename": "Alayah", "name": "McGee"], 
-                ["prename": "Atticus", "name": "Allison"], 
-                ["prename": "Edison", "name": "Beltran"], 
-                ["prename": "Atticus", "name": "Allison"], 
-                ["prename": "Kaydence", "name": "Portillo"], 
-            ]
+            "person": (
+                ["prename", "name"],
+                [
+                    ["prename": "Gwen", "name": "Portillo"], 
+                    ["prename": "Wallace", "name": "Todd"], 
+                    ["prename": "Zariah", "name": "Curtis"], 
+                    ["prename": "Muhammad", "name": "Avery"], 
+                    ["prename": "Ahmad", "name": "Johnson"], 
+                    ["prename": "Taylor", "name": "Hodges"],
+                    ["prename": "Emma", "name": "Hodges"], 
+                    ["prename": "Kaydence", "name": "McClain"], 
+                    ["prename": "Marleigh", "name": "Holland"], 
+                    ["prename": "Brady", "name": "Brandt"], 
+                    ["prename": "Loretta", "name": "Mejia"], 
+                    ["prename": "Alayah", "name": "McGee"], 
+                    ["prename": "Wallace", "name": "Weber"], 
+                    ["prename": "Loretta", "name": "Schneider"], 
+                    ["prename": "Alayah", "name": "McGee"], 
+                    ["prename": "Atticus", "name": "Allison"], 
+                    ["prename": "Edison", "name": "Beltran"], 
+                    ["prename": "Atticus", "name": "Allison"], 
+                    ["prename": "Kaydence", "name": "Portillo"], 
+                ]
+            )
         ]
         
         let query = RelationalQuery(
@@ -93,20 +96,20 @@ final class LinkTests: XCTestCase {
         XCTAssertEqual(
             result.description,
             """
-            [
-                (surname: "Allison", prename: "Atticus")
-                (surname: "Allison", prename: "Atticus")
-                (surname: "Beltran", prename: "Edison")
-                (surname: "Hodges", prename: "Taylor")
-                (surname: "Hodges", prename: "Emma")
-                (surname: "Holland", prename: "Marleigh")
-                (surname: "Johnson", prename: "Ahmad")
-                (surname: "Mejia", prename: "Loretta")
-                (surname: "Portillo", prename: "Kaydence")
-                (surname: "Portillo", prename: "Gwen")
-                (surname: "Schneider", prename: "Loretta")
-                (surname: "Todd", prename: "Wallace")
-            ]
+            surname   | prename 
+            ----------|---------
+            Allison   | Atticus 
+            Allison   | Atticus 
+            Beltran   | Edison  
+            Hodges    | Taylor  
+            Hodges    | Emma    
+            Holland   | Marleigh
+            Johnson   | Ahmad   
+            Mejia     | Loretta 
+            Portillo  | Kaydence
+            Portillo  | Gwen    
+            Schneider | Loretta 
+            Todd      | Wallace 
             """
         )
     }
