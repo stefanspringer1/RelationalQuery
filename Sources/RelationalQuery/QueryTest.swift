@@ -1,5 +1,24 @@
 public typealias RelationalQueryTestDBRow = [String:String]
 public typealias RelationalQueryTestDB = [String:[RelationalQueryTestDBRow]]
+public typealias RelationalQueryTestResultRow = [(String,String?)]
+
+public struct RelationalQueryTestResult: CustomStringConvertible {
+    let rows: [RelationalQueryTestResultRow]
+    
+    public init(withRows rows: [RelationalQueryTestResultRow] = [RelationalQueryTestResultRow]()) {
+        self.rows = rows
+    }
+    
+    public var description: String {
+        var lines = [String]()
+        lines.append("[")
+        for row in rows {
+            lines.append("    [" + row.map{ "\($0.0): \($0.1?.prepending("\"").appending("\"") ?? "null")" }.joined(separator: ", ") + "]")
+        }
+        lines.append("]")
+        return lines.joined(separator: "\n")
+    }
+}
 
 public extension RelationalQueryCondition {
     
@@ -64,34 +83,43 @@ public extension RelationalQueryResultOrder {
 
 public extension RelationalQuery {
     
-    func excute(forTestDatabase testDB: RelationalQueryTestDB) -> [RelationalQueryTestDBRow] {
-        guard let allRows = testDB[self.table] else { return [RelationalQueryTestDBRow]() }
-        var result: [RelationalQueryTestDBRow]
+    func excute(forTestDatabase testDB: RelationalQueryTestDB) -> RelationalQueryTestResult {
+        guard let allRows = testDB[self.table] else { return RelationalQueryTestResult() }
+        var filteredAndSorted: [RelationalQueryTestDBRow]
         if let condition = self.condition {
-            result = allRows.filter { condition.check(row: $0) }
+            filteredAndSorted = allRows.filter { condition.check(row: $0) }
         } else {
-            result = allRows
+            filteredAndSorted = allRows
         }
         if let order = self.order {
-            result.sort { row1, row2 in
+            filteredAndSorted.sort { row1, row2 in
                 order.lazy.map { $0.compare(row1, with: row2) }.filter{ $0 != 0 }.first != 1
             }
         }
+        var result = [RelationalQueryTestResultRow]()
         if let fields {
-            result = result.map{ originalRow in
-                var newRow = [String:String]()
+            for originalRow in filteredAndSorted {
+                var newRow = RelationalQueryTestResultRow()
                 for field in fields {
                     switch field {
                     case .field(let name):
-                        newRow[name] = originalRow[name]
+                        newRow.append((name,originalRow[name]))
                     case .renaming(let name, to: let newName):
-                        newRow[newName] = originalRow[name]
+                        newRow.append((newName,originalRow[name]))
                     }
                 }
-                return newRow
+                result.append(newRow)
             }
+        } else {
+            for originalRow in filteredAndSorted {
+                var newRow = RelationalQueryTestResultRow()
+                for (field, value) in originalRow.sorted(by: { $0.key < $1.key }) {
+                    newRow.append((field, value))
+                }
+                result.append(newRow)
+            } 
         }
-        return result
+        return RelationalQueryTestResult(withRows: result)
     }
     
 }
