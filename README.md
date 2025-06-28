@@ -33,7 +33,7 @@ print("\nPostgREST:\n")
 print(query.postgrest)
 ```
 
-`one` means “at least _one_ of the contained conditions must be true”, `all` means “_all_ of the contained conditions must be true”.
+Do not use the “fields:” argument if you want the fields in the result to be just as they are defined for the database table. In the condition, `one` means “at least _one_ of the contained conditions must be true”, `all` means “_all_ of the contained conditions must be true”.
 
 Result:
 
@@ -104,8 +104,6 @@ let query = RelationalQuery(
     orderBy: [.field("name"), .fieldWithDirection("prename", .descending)]
 )
 ```
-
-Do not use the “fields:” argument if you want the fields in the result to be just as they are defined for the database table.
 
 We can apply the query to our test database and print the result as follows:
 
