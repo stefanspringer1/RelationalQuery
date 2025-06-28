@@ -23,7 +23,7 @@ public enum RelationalQueryDBValue: CustomStringConvertible, Decodable {
 public typealias RelationalQueryDBFieldDefinitions = [(String,RelationalQueryDBDataType)]
 public typealias RelationalQueryDBRow = [String:RelationalQueryDBValue]
 public typealias RelationalQueryDBTable = (RelationalQueryDBFieldDefinitions,[RelationalQueryDBRow])
-public typealias RelationalQueryDB = [String:RelationalQueryDBTable]
+public typealias RelationalQueryDatabase = [String:RelationalQueryDBTable]
 public typealias RelationalQueryDBResultRow = [String:RelationalQueryDBValue]
 
 public struct RelationalQueryDBResult: CustomStringConvertible {
@@ -154,7 +154,7 @@ public extension RelationalQueryResultOrder {
 
 public extension RelationalQuery {
     
-    func execute(forRelationalQueryDatabase testDB: RelationalQueryDB) -> RelationalQueryDBResult {
+    func execute(forRelationalQueryDatabase testDB: RelationalQueryDatabase) -> RelationalQueryDBResult {
         guard let (originalFieldNames,allRows) = testDB[self.table] else { return RelationalQueryDBResult(fields: [String]()) }
         var filteredAndSorted: [RelationalQueryDBRow]
         if let condition = self.condition {
