@@ -144,7 +144,7 @@ let testDB: RelationalQueryDB = [
             ("age", .INTEGER),
             ("member", .BOOLEAN),
         ],
-        withContentFromJSONText: """
+        withContentFromJSONText: #"""
         [
             {"prename": "Gwen", "name": "Portillo", "age": 45, "member": false},
             {"prename": "Wallace", "name": "Todd", "age": 27, "member": false}, 
@@ -166,7 +166,7 @@ let testDB: RelationalQueryDB = [
             {"prename": "Atticus", "name": "Allison", "age": 47, "member": true}, 
             {"prename": "Kaydence", "name": "Portillo", "age": 30, "member": false}
         ]
-        """
+        """#
     )
 ]
 ```
