@@ -108,7 +108,7 @@ let query = RelationalQuery(
 We can apply the query to our test database and print the result as follows:
 
 ```swift
-let result = query.execute(forDatabase: testDB)
+let result = query.execute(forRelationalQueryDatabase: testDB)
 print(result)
 ```
 

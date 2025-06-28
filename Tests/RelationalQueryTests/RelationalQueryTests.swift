@@ -102,7 +102,7 @@ final class LinkTests: XCTestCase {
             orderBy: [.field("name"), .fieldWithDirection("prename", .descending)]
         )
         
-        let result = query.execute(forDatabase: testDB)
+        let result = query.execute(forRelationalQueryDatabase: testDB)
         
         XCTAssertEqual(
             result.description,
@@ -176,7 +176,7 @@ final class LinkTests: XCTestCase {
             orderBy: [.field("name"), .fieldWithDirection("prename", .descending)]
         )
         
-        let result = query.execute(forDatabase: testDB)
+        let result = query.execute(forRelationalQueryDatabase: testDB)
         
         XCTAssertEqual(
             result.description,
@@ -246,7 +246,7 @@ final class LinkTests: XCTestCase {
             orderBy: [.field("name"), .fieldWithDirection("prename", .descending)]
         )
         
-        let result = query.execute(forDatabase: testDB)
+        let result = query.execute(forRelationalQueryDatabase: testDB)
         
         XCTAssertEqual(
             result.description,
