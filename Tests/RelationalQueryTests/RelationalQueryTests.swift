@@ -56,7 +56,12 @@ final class LinkTests: XCTestCase {
         
         let testDB: RelationalQueryDB = [
             "person": try relationalQueryDBTable(
-                withFieldDefinitions: ["prename": .TEXT, "name": .TEXT, "age": .INTEGER, "member": .BOOLEAN],
+                withFields: [
+                    "prename": .TEXT,
+                    "name": .TEXT,
+                    "age": .INTEGER,
+                    "member": .BOOLEAN,
+                ],
                 withContentFromValues:
                 [
                     ["prename": "Gwen", "name": "Portillo", "age": 45, "member": false],
@@ -119,7 +124,12 @@ final class LinkTests: XCTestCase {
         
         let testDB: RelationalQueryDB = [
             "person": try relationalQueryDBTable(
-                withFieldDefinitions: ["prename": .TEXT, "name": .TEXT, "age": .INTEGER, "member": .BOOLEAN],
+                withFields: [
+                    "prename": .TEXT,
+                    "name": .TEXT,
+                    "age": .INTEGER,
+                    "member": .BOOLEAN,
+                ],
                 withContentFromJSONText: """
                 [
                     {"prename": "Gwen", "name": "Portillo", "age": 45, "member": false},

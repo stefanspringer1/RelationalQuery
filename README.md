@@ -54,7 +54,12 @@ For testing a query, a simple database can be formulated as follows:
 ```swift
 let testDB: RelationalQueryDB = [
     "person": try relationalQueryDBTable(
-        withFieldDefinitions: ["prename": .TEXT, "name": .TEXT, "age": .INTEGER, "member": .BOOLEAN],
+        withFields: [
+            "prename": .TEXT,
+            "name": .TEXT,
+            "age": .INTEGER,
+            "member": .BOOLEAN,
+        ],
         withContentFromValues:
         [
             ["prename": "Gwen", "name": "Portillo", "age": 45, "member": false],
@@ -128,7 +133,12 @@ It might be convenient to use JSON data for the rows, so you can write:
 ```swift
 let testDB: RelationalQueryDB = [
     "person": try relationalQueryDBTable(
-        withFieldDefinitions: ["prename": .TEXT, "name": .TEXT, "age": .INTEGER, "member": .BOOLEAN],
+        withFields: [
+            "prename": .TEXT,
+            "name": .TEXT,
+            "age": .INTEGER,
+            "member": .BOOLEAN,
+        ],
         withContentFromJSONText: """
         [
             {"prename": "Gwen", "name": "Portillo", "age": 45, "member": false},
@@ -156,12 +166,12 @@ let testDB: RelationalQueryDB = [
 ]
 ```
 
-You can use `relationalQueryDBTable(withFieldDefinitions:withContentFromParsedJSON:)` if the JSON has already been parsed or built by some other method.
+You can use `relationalQueryDBTable(withFields:withContentFromParsedJSON:)` if the JSON has already been parsed or built by some other method.
 
 ---
 
 **NOTE:**
 
-If you mistakenly call `relationalQueryDBTable(withFieldDefinitions:withContentFromParsedJSON:)` with the JSON text to parse in the second argument, you will get the error “JSON has wrong structure”, then use `relationalQueryDBTable(withFieldDefinitions:withContentFromJSONText:)` instead.
+If you mistakenly call `relationalQueryDBTable(withFields:withContentFromParsedJSON:)` with the JSON text to parse in the second argument, you will get the error “JSON has wrong structure”, then use `relationalQueryDBTable(withFields:withContentFromJSONText:)` instead.
 
 ---
