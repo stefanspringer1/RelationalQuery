@@ -38,8 +38,8 @@ final class LinkTests: XCTestCase {
     
     func testQueryTestRowCompare() throws {
         
-        let row1: RelationalQueryTestDBRow = ["prename": .text("Wallace"), "name": .text("Portillo")]
-        let row2: RelationalQueryTestDBRow = ["prename": .text("Gwen"), "name": .text("Todd")]
+        let row1: RelationalQueryDBRow = ["prename": .text("Wallace"), "name": .text("Portillo")]
+        let row2: RelationalQueryDBRow = ["prename": .text("Gwen"), "name": .text("Todd")]
         
         // sorting along "name":
         XCTAssertEqual(RelationalQueryResultOrder.field("prename").compare(row1, with: row2), 1)
@@ -54,8 +54,8 @@ final class LinkTests: XCTestCase {
     
     func testQueryTest() throws {
         
-        let testDB: RelationalQueryTestDB = [
-            "person": try relationalQueryTestDBTable(
+        let testDB: RelationalQueryDB = [
+            "person": try relationalQueryDBTable(
                 withFieldsDefinitions: ["prename": .TEXT, "name": .TEXT, "age": .INTEGER, "member": .BOOLEAN],
                 fromGenericValues:
                 [
@@ -92,7 +92,7 @@ final class LinkTests: XCTestCase {
             orderBy: [.field("name"), .fieldWithDirection("prename", .descending)]
         )
         
-        let result = query.execute(forTestDatabase: testDB)
+        let result = query.execute(forDatabase: testDB)
         
         XCTAssertEqual(
             result.description,
@@ -117,8 +117,8 @@ final class LinkTests: XCTestCase {
     
     func testQueryTestWithJSON() throws {
         
-        let testDB: RelationalQueryTestDB = [
-            "person": try relationalQueryTestTable(
+        let testDB: RelationalQueryDB = [
+            "person": try relationalQueryDBTable(
                 withFieldsDefinitions: ["prename": .TEXT, "name": .TEXT, "age": .INTEGER, "member": .BOOLEAN],
                 fromJSON: """
                 [
@@ -156,7 +156,7 @@ final class LinkTests: XCTestCase {
             orderBy: [.field("name"), .fieldWithDirection("prename", .descending)]
         )
         
-        let result = query.execute(forTestDatabase: testDB)
+        let result = query.execute(forDatabase: testDB)
         
         XCTAssertEqual(
             result.description,

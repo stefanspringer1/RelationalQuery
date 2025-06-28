@@ -23,7 +23,7 @@ let package = Package(
         .target(
             name: "RelationalQuery"),
         .testTarget(
-            name: "RelationalQueryTests",
+            name: "RelationalQueryDBs",
             dependencies: ["RelationalQuery"]
         ),
     ]
