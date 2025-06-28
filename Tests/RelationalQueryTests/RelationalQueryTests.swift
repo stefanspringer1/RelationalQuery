@@ -38,9 +38,8 @@ final class LinkTests: XCTestCase {
     
     func testQueryTestRowCompare() throws {
         
-        let row1: RelationalQueryTestDBRow = ["prename": "Wallace", "name": "Portillo"]
-        let row2: RelationalQueryTestDBRow = ["prename": "Gwen", "name": "Todd"]
-        
+        let row1: RelationalQueryTestDBRow = ["prename": .text("Wallace"), "name": .text("Portillo")]
+        let row2: RelationalQueryTestDBRow = ["prename": .text("Gwen"), "name": .text("Todd")]
         
         // sorting along "name":
         XCTAssertEqual(RelationalQueryResultOrder.field("prename").compare(row1, with: row2), 1)
@@ -56,35 +55,36 @@ final class LinkTests: XCTestCase {
     func testQueryTest() throws {
         
         let testDB: RelationalQueryTestDB = [
-            "person": (
-                ["prename", "name"],
+            "person": try relationalQueryTestDBTable(
+                withFieldsDefinitions: ["prename": .TEXT, "name": .TEXT, "age": .INTEGER, "member": .BOOLEAN],
+                fromGenericValues:
                 [
-                    ["prename": "Gwen", "name": "Portillo"], 
-                    ["prename": "Wallace", "name": "Todd"], 
-                    ["prename": "Zariah", "name": "Curtis"], 
-                    ["prename": "Muhammad", "name": "Avery"], 
-                    ["prename": "Ahmad", "name": "Johnson"], 
-                    ["prename": "Taylor", "name": "Hodges"],
-                    ["prename": "Emma", "name": "Hodges"], 
-                    ["prename": "Kaydence", "name": "McClain"], 
-                    ["prename": "Marleigh", "name": "Holland"], 
-                    ["prename": "Brady", "name": "Brandt"], 
-                    ["prename": "Loretta", "name": "Mejia"], 
-                    ["prename": "Alayah", "name": "McGee"], 
-                    ["prename": "Wallace", "name": "Weber"], 
-                    ["prename": "Loretta", "name": "Schneider"], 
-                    ["prename": "Alayah", "name": "McGee"], 
-                    ["prename": "Atticus", "name": "Allison"], 
-                    ["prename": "Edison", "name": "Beltran"], 
-                    ["prename": "Atticus", "name": "Allison"], 
-                    ["prename": "Kaydence", "name": "Portillo"], 
+                    ["prename": "Gwen", "name": "Portillo", "age": 45, "member": false],
+                    ["prename": "Wallace", "name": "Todd", "age": 27, "member": false],
+                    ["prename": "Zariah", "name": "Curtis", "age": 63, "member": false],
+                    ["prename": "Muhammad", "name": "Avery", "age": 33, "member": true],
+                    ["prename": "Ahmad", "name": "Johnson", "age": 26, "member": true],
+                    ["prename": "Taylor", "name": "Hodges", "age": 21, "member": false],
+                    ["prename": "Emma", "name": "Hodges", "age": 55, "member": false],
+                    ["prename": "Kaydence", "name": "McClain", "age": 37, "member": false],
+                    ["prename": "Marleigh", "name": "Holland", "age": 40, "member": true],
+                    ["prename": "Brady", "name": "Brandt", "age": 34, "member": false],
+                    ["prename": "Loretta", "name": "Mejia", "age": 51, "member": false],
+                    ["prename": "Alayah", "name": "McGee", "age": 66, "member": false],
+                    ["prename": "Wallace", "name": "Weber", "age": 44, "member": true],
+                    ["prename": "Loretta", "name": "Schneider", "age": 23, "member": false],
+                    ["prename": "Alayah", "name": "McGee", "age": 23, "member": false],
+                    ["prename": "Atticus", "name": "Allison", "age": 50, "member": true],
+                    ["prename": "Edison", "name": "Beltran", "age": 49, "member": false],
+                    ["prename": "Atticus", "name": "Allison", "age": 47, "member": true],
+                    ["prename": "Kaydence", "name": "Portillo", "age": 30, "member": false],
                 ]
             )
         ]
         
         let query = RelationalQuery(
             table: "person",
-            fields: [.renaming("name", to: "surname"), .field("prename")],
+            fields: [.renaming("name", to: "surname"), .field("prename"), .field("age"), .field("member")],
             condition: one {
                 compare(field: "prename", withTemplate: "*o*", usingWildcard: "*")
                 compare(field: "name", withTemplate: "*o*", usingWildcard: "*")
@@ -97,86 +97,86 @@ final class LinkTests: XCTestCase {
         XCTAssertEqual(
             result.description,
             """
-            surname   | prename 
-            ----------|---------
-            Allison   | Atticus 
-            Allison   | Atticus 
-            Beltran   | Edison  
-            Hodges    | Taylor  
-            Hodges    | Emma    
-            Holland   | Marleigh
-            Johnson   | Ahmad   
-            Mejia     | Loretta 
-            Portillo  | Kaydence
-            Portillo  | Gwen    
-            Schneider | Loretta 
-            Todd      | Wallace 
+            surname   | prename  | age | member
+            ----------|----------|-----|-------
+            Allison   | Atticus  | 47  | true  
+            Allison   | Atticus  | 50  | true  
+            Beltran   | Edison   | 49  | false 
+            Hodges    | Taylor   | 21  | false 
+            Hodges    | Emma     | 55  | false 
+            Holland   | Marleigh | 40  | true  
+            Johnson   | Ahmad    | 26  | true  
+            Mejia     | Loretta  | 51  | false 
+            Portillo  | Kaydence | 30  | false 
+            Portillo  | Gwen     | 45  | false 
+            Schneider | Loretta  | 23  | false 
+            Todd      | Wallace  | 27  | false 
             """
         )
     }
     
-}
-
-func testQueryTestWithJSON() throws {
-    
-    let testDB: RelationalQueryTestDB = [
-        "person": (
-            ["prename", "name"],
-            try relationalQueryTestDBRows(fromJSON: """
-            [
-                {"prename": "Gwen", "name": "Portillo"},
-                {"prename": "Wallace", "name": "Todd"}, 
-                {"prename": "Zariah", "name": "Curtis"}, 
-                {"prename": "Muhammad", "name": "Avery"}, 
-                {"prename": "Ahmad", "name": "Johnson"}, 
-                {"prename": "Taylor", "name": "Hodges"},
-                {"prename": "Emma", "name": "Hodges"}, 
-                {"prename": "Kaydence", "name": "McClain"}, 
-                {"prename": "Marleigh", "name": "Holland"}, 
-                {"prename": "Brady", "name": "Brandt"}, 
-                {"prename": "Loretta", "name": "Mejia"}, 
-                {"prename": "Alayah", "name": "McGee"}, 
-                {"prename": "Wallace", "name": "Weber"}, 
-                {"prename": "Loretta", "name": "Schneider"}, 
-                {"prename": "Alayah", "name": "McGee"}, 
-                {"prename": "Atticus", "name": "Allison"}, 
-                {"prename": "Edison", "name": "Beltran"}, 
-                {"prename": "Atticus", "name": "Allison"}, 
-                {"prename": "Kaydence", "name": "Portillo"}
-            ]
-            """)
+    func testQueryTestWithJSON() throws {
+        
+        let testDB: RelationalQueryTestDB = [
+            "person": try relationalQueryTestTable(
+                withFieldsDefinitions: ["prename": .TEXT, "name": .TEXT, "age": .INTEGER, "member": .BOOLEAN],
+                fromJSON: """
+                [
+                    {"prename": "Gwen", "name": "Portillo", "age": 45, "member": false},
+                    {"prename": "Wallace", "name": "Todd", "age": 27, "member": false}, 
+                    {"prename": "Zariah", "name": "Curtis", "age": 63, "member": false}, 
+                    {"prename": "Muhammad", "name": "Avery", "age": 33, "member": true}, 
+                    {"prename": "Ahmad", "name": "Johnson", "age": 26, "member": true}, 
+                    {"prename": "Taylor", "name": "Hodges", "age": 21, "member": false},
+                    {"prename": "Emma", "name": "Hodges", "age": 55, "member": false}, 
+                    {"prename": "Kaydence", "name": "McClain", "age": 37, "member": false}, 
+                    {"prename": "Marleigh", "name": "Holland", "age": 40, "member": true}, 
+                    {"prename": "Brady", "name": "Brandt", "age": 34, "member": false}, 
+                    {"prename": "Loretta", "name": "Mejia", "age": 51, "member": false}, 
+                    {"prename": "Alayah", "name": "McGee", "age": 66, "member": false}, 
+                    {"prename": "Wallace", "name": "Weber", "age": 44, "member": true}, 
+                    {"prename": "Loretta", "name": "Schneider", "age": 23, "member": false}, 
+                    {"prename": "Alayah", "name": "McGee", "age": 23, "member": false}, 
+                    {"prename": "Atticus", "name": "Allison", "age": 50, "member": true}, 
+                    {"prename": "Edison", "name": "Beltran", "age": 49, "member": false}, 
+                    {"prename": "Atticus", "name": "Allison", "age": 47, "member": true}, 
+                    {"prename": "Kaydence", "name": "Portillo", "age": 30, "member": false}
+                ]
+                """
+            )
+        ]
+        
+        let query = RelationalQuery(
+            table: "person",
+            fields: [.renaming("name", to: "surname"), .field("prename"), .field("age"), .field("member")],
+            condition: one {
+                compare(field: "prename", withTemplate: "*o*", usingWildcard: "*")
+                compare(field: "name", withTemplate: "*o*", usingWildcard: "*")
+            },
+            orderBy: [.field("name"), .fieldWithDirection("prename", .descending)]
         )
-    ]
+        
+        let result = query.execute(forTestDatabase: testDB)
+        
+        XCTAssertEqual(
+            result.description,
+            """
+            surname   | prename  | age | member
+            ----------|----------|-----|-------
+            Allison   | Atticus  | 47  | true  
+            Allison   | Atticus  | 50  | true  
+            Beltran   | Edison   | 49  | false 
+            Hodges    | Taylor   | 21  | false 
+            Hodges    | Emma     | 55  | false 
+            Holland   | Marleigh | 40  | true  
+            Johnson   | Ahmad    | 26  | true  
+            Mejia     | Loretta  | 51  | false 
+            Portillo  | Kaydence | 30  | false 
+            Portillo  | Gwen     | 45  | false 
+            Schneider | Loretta  | 23  | false 
+            Todd      | Wallace  | 27  | false 
+            """
+        )
+    }
     
-    let query = RelationalQuery(
-        table: "person",
-        fields: [.renaming("name", to: "surname"), .field("prename")],
-        condition: one {
-            compare(field: "prename", withTemplate: "*o*", usingWildcard: "*")
-            compare(field: "name", withTemplate: "*o*", usingWildcard: "*")
-        },
-        orderBy: [.field("name"), .fieldWithDirection("prename", .descending)]
-    )
-    
-    let result = query.execute(forTestDatabase: testDB)
-    
-    XCTAssertEqual(
-        result.description,
-        """
-        surname   | prename 
-        ----------|---------
-        Allison   | Atticus 
-        Allison   | Atticus 
-        Beltran   | Edison  
-        Hodges    | Taylor  
-        Hodges    | Emma    
-        Holland   | Marleigh
-        Johnson   | Ahmad   
-        Mejia     | Loretta 
-        Portillo  | Kaydence
-        Portillo  | Gwen    
-        Schneider | Loretta 
-        Todd      | Wallace 
-        """
-    )
 }

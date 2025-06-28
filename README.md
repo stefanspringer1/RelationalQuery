@@ -51,7 +51,7 @@ New output formats can easily be added, see the extensions for `SQLConvertible` 
 
 ## Tests
 
-For testing a query, a simple test database (with values only as text) can be formulated as follows:
+For testing a query, a simple test database can be formulated as follows:
 
 ```swift
 let testDB: RelationalQueryTestDB = [

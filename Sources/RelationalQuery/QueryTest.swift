@@ -1,9 +1,30 @@
 import Foundation
 
-public typealias RelationalQueryTestDBFields = [String]
-public typealias RelationalQueryTestDBRow = [String:String]
-public typealias RelationalQueryTestDB = [String:(RelationalQueryTestDBFields,[RelationalQueryTestDBRow])]
-public typealias RelationalQueryTestResultRow = [String:String]
+public enum RelationalQueryTestDBDataType {
+    case TEXT
+    case INTEGER
+    case BOOLEAN
+}
+
+public enum RelationalQueryTestDBValue: CustomStringConvertible, Decodable {
+    case text(_: String)
+    case integer(_: Int)
+    case boolean(_: Bool)
+    
+    public var description: String {
+        switch self {
+        case .text(let value): value
+        case .integer(let value): value.description
+        case .boolean(let value): value.description
+        }
+    }
+}
+
+public typealias RelationalQueryTestDBFieldDefinitions = [String:RelationalQueryTestDBDataType]
+public typealias RelationalQueryTestDBRow = [String:RelationalQueryTestDBValue]
+public typealias RelationalQueryTestTable = (RelationalQueryTestDBFieldDefinitions,[RelationalQueryTestDBRow])
+public typealias RelationalQueryTestDB = [String:RelationalQueryTestTable]
+public typealias RelationalQueryTestResultRow = [String:RelationalQueryTestDBValue]
 
 public struct RelationalQueryTestResult: CustomStringConvertible {
     public let fields: [String]
@@ -17,7 +38,7 @@ public struct RelationalQueryTestResult: CustomStringConvertible {
         for field in fields {
             displayedColumnWith[field] = field.count
             for row in rows {
-                if let length = row[field]?.count, length > displayedColumnWith[field] ?? 0 {
+                if let length = row[field]?.description.count, length > displayedColumnWith[field] ?? 0 {
                     displayedColumnWith[field] = length
                 }
             }
@@ -40,7 +61,7 @@ public struct RelationalQueryTestResult: CustomStringConvertible {
         lines.append(fields.map{ extending($0, toLength: displayedColumnWith[$0] ?? 0) }.joined(separator: " | "))
         lines.append(fields.map{ String(repeating: "-", count: (displayedColumnWith[$0] ?? 0)) }.joined(separator: "-|-"))
         for row in rows {
-            lines.append(fields.map{ extending(row[$0] ?? "", toLength: displayedColumnWith[$0] ?? 0) }.joined(separator: " | "))
+            lines.append(fields.map{ extending(row[$0]?.description ?? "", toLength: displayedColumnWith[$0] ?? 0) }.joined(separator: " | "))
         }
         return lines.joined(separator: "\n")
     }
@@ -51,11 +72,13 @@ public extension RelationalQueryCondition {
     func check(row: RelationalQueryTestDBRow) -> Bool {
         switch self {
         case .equal(field: let field, value: let value):
-            return row[field] == value
+            guard case .text(let text) = row[field] else { return false}
+            return text == value
         case .similar(field: let field, template: let template, wildcard: let wildcard):
             do {
+                guard case .text(let text) = row[field] else { return false}
                 let regex = try Regex("^\(template.replacing(wildcard, with: ".*"))$")
-                return row[field]?.contains(regex) == true
+                return text.contains(regex)
             } catch {
                 return false
             }
@@ -81,17 +104,17 @@ public extension RelationalQueryCondition {
 public extension RelationalQueryResultOrder {
     
     func compare(_ row1: RelationalQueryTestDBRow, with row2: RelationalQueryTestDBRow) -> Int {
-        let value1: String?
-        let value2: String?
+        var value1: String? = nil
+        var value2: String? = nil
         let orderFactor: Int
         switch self {
         case .field(let name):
-            value1 = row1[name]
-            value2 = row2[name]
+            if case .text(let text) = row1[name] { value1 = text }
+            if case .text(let text) = row2[name] { value2 = text }
             orderFactor = 1
         case .fieldWithDirection(let name, let direction):
-            value1 = row1[name]
-            value2 = row2[name]
+            if case .text(let text) = row1[name] { value1 = text }
+            if case .text(let text) = row2[name] { value2 = text }
             orderFactor = switch direction {
             case .ascending: 1
             case .descending: -1
@@ -152,7 +175,7 @@ public extension RelationalQuery {
                 result.append(newRow)
             }
         } else {
-            fieldNames = orinalFieldNames
+            fieldNames = orinalFieldNames.map { $0.0 }
             for originalRow in filteredAndSorted {
                 var newRow = RelationalQueryTestResultRow()
                 for (field, value) in originalRow.sorted(by: { $0.key < $1.key }) {
@@ -166,7 +189,37 @@ public extension RelationalQuery {
     
 }
 
-public func relationalQueryTestDBRows(fromJSON json: String) throws -> [RelationalQueryTestDBRow] {
+public func relationalQueryTestDBTable(
+    withFieldsDefinitions fieldsDefinitions: RelationalQueryTestDBFieldDefinitions,
+    fromGenericValues genericRows: [[String:Any]]
+) throws -> RelationalQueryTestTable {
+    var rows = [RelationalQueryTestDBRow]()
+    for genericRow in genericRows {
+        var row = RelationalQueryTestDBRow()
+        for (key,value) in genericRow {
+            if let text = value as? String { row[key] = .text(text) }
+            else if let int = value as? Int {
+                if fieldsDefinitions[key] == .BOOLEAN {
+                    row[key] = .boolean(int != 0)
+                } else {
+                    row[key] = .integer(int)
+                }
+            }
+            else if let bool = value as? Bool { row[key] = .boolean(bool) }
+            else { throw RelationalQueryError("invalid value: \(value)") }
+        }
+        rows.append(row)
+    }
+    return (fieldsDefinitions, rows)
+}
+
+public func relationalQueryTestTable(
+    withFieldsDefinitions fieldsDefinitions: RelationalQueryTestDBFieldDefinitions,
+    fromJSON json: String
+) throws -> RelationalQueryTestTable {
     guard let jsonData = json.data(using: .utf8) else { throw RelationalQueryError("could not convert JSON string to Data") }
-    return try JSONDecoder().decode([RelationalQueryTestDBRow].self, from: jsonData)
+    let json = try JSONSerialization.jsonObject(with: jsonData)
+    print(json)
+    guard let genericRows = json as? [[String: Any]] else { throw RelationalQueryError("JSON has wrong structure") }
+    return try relationalQueryTestDBTable(withFieldsDefinitions: fieldsDefinitions, fromGenericValues: genericRows)
 }
