@@ -35,7 +35,7 @@ print("\nPostgREST:\n")
 print(query.postgrest)
 ```
 
-`one` means “_at least one_ the contained conditions must be true”, `all` means “_all_ the contained conditions must be true”.
+`one` means “at least _one_ the contained conditions must be true”, `all` means “_all_ the contained conditions must be true”.
 
 Result:
 
