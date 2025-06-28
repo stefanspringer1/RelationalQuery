@@ -47,7 +47,7 @@ person?select=surname:name,prename&or=(prename.eq.Bert,prename.like.C*,and(name.
 
 New output formats can easily be added, see the extensions for `SQLConvertible` and `PostgRESTConvertible`.
 
-## Tests
+## Testing a query
 
 For testing a query, a simple database can be formulated as follows (for using JSON input see further below):
 
