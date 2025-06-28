@@ -105,6 +105,8 @@ let query = RelationalQuery(
 )
 ```
 
+Do not use the “fields:” argument if you want the fields in the result to be just as they are defined for the database table.
+
 We can apply the query to our test database and print the result as follows:
 
 ```swift
