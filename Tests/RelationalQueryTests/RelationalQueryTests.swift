@@ -89,7 +89,12 @@ final class LinkTests: XCTestCase {
         
         let query = RelationalQuery(
             table: "person",
-            fields: [.renaming("name", to: "surname"), .field("prename"), .field("age"), .field("member")],
+            fields: [
+                .renaming("name", to: "surname"),
+                .field("prename"),
+                .field("age"),
+                .field("member")
+            ],
             condition: one {
                 compare(textField: "prename", withTemplate: "*o*", usingWildcard: "*")
                 compare(textField: "name", withTemplate: "*o*", usingWildcard: "*")
@@ -158,7 +163,12 @@ final class LinkTests: XCTestCase {
         
         let query = RelationalQuery(
             table: "person",
-            fields: [.renaming("name", to: "surname"), .field("prename"), .field("age"), .field("member")],
+            fields: [
+                .renaming("name", to: "surname"),
+                .field("prename"),
+                .field("age"),
+                .field("member")
+            ],
             condition: one {
                 compare(textField: "prename", withTemplate: "*o*", usingWildcard: "*")
                 compare(textField: "name", withTemplate: "*o*", usingWildcard: "*")
