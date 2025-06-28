@@ -49,7 +49,7 @@ New output formats can easily be added, see the extensions for `SQLConvertible` 
 
 ## Tests
 
-For testing a query, a simple database can be formulated as follows:
+For testing a query, a simple database can be formulated as follows (for using JSON input see further below):
 
 ```swift
 let testDB: RelationalQueryDB = [
