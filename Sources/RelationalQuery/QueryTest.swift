@@ -1,3 +1,5 @@
+import Foundation
+
 public typealias RelationalQueryTestDBFields = [String]
 public typealias RelationalQueryTestDBRow = [String:String]
 public typealias RelationalQueryTestDB = [String:(RelationalQueryTestDBFields,[RelationalQueryTestDBRow])]
@@ -162,4 +164,9 @@ public extension RelationalQuery {
         return RelationalQueryTestResult(fields: fieldNames, withRows: result)
     }
     
+}
+
+public func relationalQueryTestDBRows(fromJSON json: String) throws -> [RelationalQueryTestDBRow] {
+    guard let jsonData = json.data(using: .utf8) else { throw RelationalQueryError("could not convert JSON string to Data") }
+    return try JSONDecoder().decode([RelationalQueryTestDBRow].self, from: jsonData)
 }

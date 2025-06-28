@@ -116,3 +116,67 @@ final class LinkTests: XCTestCase {
     }
     
 }
+
+func testQueryTestWithJSON() throws {
+    
+    let testDB: RelationalQueryTestDB = [
+        "person": (
+            ["prename", "name"],
+            try relationalQueryTestDBRows(fromJSON: """
+            [
+                {"prename": "Gwen", "name": "Portillo"},
+                {"prename": "Wallace", "name": "Todd"}, 
+                {"prename": "Zariah", "name": "Curtis"}, 
+                {"prename": "Muhammad", "name": "Avery"}, 
+                {"prename": "Ahmad", "name": "Johnson"}, 
+                {"prename": "Taylor", "name": "Hodges"},
+                {"prename": "Emma", "name": "Hodges"}, 
+                {"prename": "Kaydence", "name": "McClain"}, 
+                {"prename": "Marleigh", "name": "Holland"}, 
+                {"prename": "Brady", "name": "Brandt"}, 
+                {"prename": "Loretta", "name": "Mejia"}, 
+                {"prename": "Alayah", "name": "McGee"}, 
+                {"prename": "Wallace", "name": "Weber"}, 
+                {"prename": "Loretta", "name": "Schneider"}, 
+                {"prename": "Alayah", "name": "McGee"}, 
+                {"prename": "Atticus", "name": "Allison"}, 
+                {"prename": "Edison", "name": "Beltran"}, 
+                {"prename": "Atticus", "name": "Allison"}, 
+                {"prename": "Kaydence", "name": "Portillo"}
+            ]
+            """)
+        )
+    ]
+    
+    let query = RelationalQuery(
+        table: "person",
+        fields: [.renaming("name", to: "surname"), .field("prename")],
+        condition: one {
+            compare(field: "prename", withTemplate: "*o*", usingWildcard: "*")
+            compare(field: "name", withTemplate: "*o*", usingWildcard: "*")
+        },
+        orderBy: [.field("name"), .fieldWithDirection("prename", .descending)]
+    )
+    
+    let result = query.execute(forTestDatabase: testDB)
+    
+    XCTAssertEqual(
+        result.description,
+        """
+        surname   | prename 
+        ----------|---------
+        Allison   | Atticus 
+        Allison   | Atticus 
+        Beltran   | Edison  
+        Hodges    | Taylor  
+        Hodges    | Emma    
+        Holland   | Marleigh
+        Johnson   | Ahmad   
+        Mejia     | Loretta 
+        Portillo  | Kaydence
+        Portillo  | Gwen    
+        Schneider | Loretta 
+        Todd      | Wallace 
+        """
+    )
+}

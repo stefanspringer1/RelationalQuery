@@ -123,3 +123,36 @@ Portillo  | Gwen
 Schneider | Loretta 
 Todd      | Wallace 
 ```
+
+It might be convenient to use JSON data for the rows, so you can write:
+
+```swift
+let testDB: RelationalQueryTestDB = [
+    "person": (
+        ["prename", "name"],
+        try relationalQueryTestDBRows(fromJSON: """
+        [
+            {"prename": "Gwen", "name": "Portillo"},
+            {"prename": "Wallace", "name": "Todd"}, 
+            {"prename": "Zariah", "name": "Curtis"}, 
+            {"prename": "Muhammad", "name": "Avery"}, 
+            {"prename": "Ahmad", "name": "Johnson"}, 
+            {"prename": "Taylor", "name": "Hodges"},
+            {"prename": "Emma", "name": "Hodges"}, 
+            {"prename": "Kaydence", "name": "McClain"}, 
+            {"prename": "Marleigh", "name": "Holland"}, 
+            {"prename": "Brady", "name": "Brandt"}, 
+            {"prename": "Loretta", "name": "Mejia"}, 
+            {"prename": "Alayah", "name": "McGee"}, 
+            {"prename": "Wallace", "name": "Weber"}, 
+            {"prename": "Loretta", "name": "Schneider"}, 
+            {"prename": "Alayah", "name": "McGee"}, 
+            {"prename": "Atticus", "name": "Allison"}, 
+            {"prename": "Edison", "name": "Beltran"}, 
+            {"prename": "Atticus", "name": "Allison"}, 
+            {"prename": "Kaydence", "name": "Portillo"}
+        ]
+        """)
+    )
+]
+```
