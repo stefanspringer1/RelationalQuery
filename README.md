@@ -35,6 +35,8 @@ print("\nPostgREST:\n")
 print(query.postgrest)
 ```
 
+`one` means “_at least one_ the contained conditions must be true”, `all` means “_all_ the contained conditions must be true”.
+
 Result:
 
 ```text
@@ -42,7 +44,7 @@ SQL:
 SELECT "name" AS "surname","prename" FROM "person" WHERE ("prename"='Bert' OR "prename" LIKE 'C%' OR ("name" LIKE 'D%' AND "name" LIKE '%n' AND "prename"='Ernie')) ORDER BY "name","prename" DESC
 
 PostgREST:
-person?select=surname:name,prename&or=(prename.eq.Bert,prename.like.C*,and=(name.like.D*,name.like.*n,prename.eq.Ernie))&order=name,prename.desc
+person?select=surname:name,prename&or=(prename.eq.Bert,prename.like.C*,and(name.like.D*,name.like.*n,prename.eq.Ernie))&order=name,prename.desc"
 ```
 
 New output formats can easily be added, see the extensions for `SQLConvertible` and `PostgRESTConvertible`.
