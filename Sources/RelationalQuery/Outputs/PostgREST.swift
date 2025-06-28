@@ -1,3 +1,5 @@
+// cf. https://docs.postgrest.org/en/v13/references/api/tables_views.html
+
 public protocol PostgRESTConvertible {
     var postgrest: String { get }
 }
@@ -48,10 +50,24 @@ extension RelationalQueryCondition: PostgRESTConvertible {
     
     public func postgrest(topLevel: Bool) -> String {
         switch self {
-        case .equal(let field, let value):
+        case .equalText(let field, let value):
             "\(field.urlEscaped)\(topLevel ? "=" : ".")eq.\(value.urlEscaped)"
-        case .similar(field: let field, template: let value, wildcard: let wildcard):
+        case .equalInteger(let field, let value):
+            "\(field.urlEscaped)\(topLevel ? "=" : ".")eq.\(value)"
+        case .smallerInteger(let field, let value):
+            "\(field.urlEscaped)\(topLevel ? "=" : ".")lt.\(value)"
+        case .smallerOrEqualInteger(let field, let value):
+            "\(field.urlEscaped)\(topLevel ? "=" : ".")lte.\(value)"
+        case .greaterInteger(let field, let value):
+            "\(field.urlEscaped)\(topLevel ? "=" : ".")gt.\(value)"
+        case .greaterOrEqualInteger(let field, let value):
+            "\(field.urlEscaped)\(topLevel ? "=" : ".")gte.\(value)"
+        case .equalBoolean(let field, let value):
+            "\(field.urlEscaped)\(topLevel ? "=" : ".")eq.\(value)"
+        case .similarText(field: let field, template: let value, wildcard: let wildcard):
             "\(field.urlEscaped)\(topLevel ? "=" : ".")like.\(value.replacing(wildcard, with: "*").urlEscaped)"
+        case .not(let condition):
+            "not\(topLevel ? "=" : ".")\(condition.postgrest(topLevel: false))"
         case .and(let conditions):
             "and\(topLevel ? "=" : "")(\(conditions.map{ $0.postgrest(topLevel: false) }.joined(separator: ",")))"
         case .or(let conditions):

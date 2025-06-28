@@ -71,10 +71,28 @@ public extension RelationalQueryCondition {
     
     func check(row: RelationalQueryTestDBRow) -> Bool {
         switch self {
-        case .equal(field: let field, value: let value):
+        case .equalText(field: let field, value: let value):
             guard case .text(let text) = row[field] else { return false}
             return text == value
-        case .similar(field: let field, template: let template, wildcard: let wildcard):
+        case .equalInteger(field: let field, value: let value):
+            guard case .integer(let text) = row[field] else { return false}
+            return text == value
+        case .smallerInteger(field: let field, than: let value):
+            guard case .integer(let text) = row[field] else { return false}
+            return text < value
+        case .smallerOrEqualInteger(field: let field, than: let value):
+            guard case .integer(let text) = row[field] else { return false}
+            return text <= value
+        case .greaterInteger(field: let field, than: let value):
+            guard case .integer(let text) = row[field] else { return false}
+            return text > value
+        case .greaterOrEqualInteger(field: let field, than: let value):
+            guard case .integer(let text) = row[field] else { return false}
+            return text >= value
+        case .equalBoolean(field: let field, value: let value):
+            guard case .boolean(let text) = row[field] else { return false}
+            return text == value
+        case .similarText(field: let field, template: let template, wildcard: let wildcard):
             do {
                 guard case .text(let text) = row[field] else { return false}
                 let regex = try Regex("^\(template.replacing(wildcard, with: ".*"))$")
@@ -82,6 +100,8 @@ public extension RelationalQueryCondition {
             } catch {
                 return false
             }
+        case .not(let condition):
+            return !condition.check(row: row)
         case .and(let conditions):
             for condition in conditions {
                 if !condition.check(row: row) {
@@ -219,7 +239,6 @@ public func relationalQueryTestTable(
 ) throws -> RelationalQueryTestTable {
     guard let jsonData = json.data(using: .utf8) else { throw RelationalQueryError("could not convert JSON string to Data") }
     let json = try JSONSerialization.jsonObject(with: jsonData)
-    print(json)
     guard let genericRows = json as? [[String: Any]] else { throw RelationalQueryError("JSON has wrong structure") }
     return try relationalQueryTestDBTable(withFieldsDefinitions: fieldsDefinitions, fromGenericValues: genericRows)
 }

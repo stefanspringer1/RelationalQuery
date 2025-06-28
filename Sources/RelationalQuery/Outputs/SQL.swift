@@ -45,10 +45,24 @@ extension RelationalQueryCondition: SQLConvertible {
     
     public var sql: String {
         switch self {
-        case .equal(let field, let value):
-            field.asSQLName + "=" + value.asSQLText
-        case .similar(field: let field, template: let template, wildcard: let wildcard):
+        case .equalText(field: let field, value: let value):
+            "\(field.asSQLName)=\(value.asSQLText)"
+        case .equalInteger(field: let field, value: let value):
+            "\(field.asSQLName)=\(value)"
+        case .smallerInteger(field: let field, than: let value):
+            "\(field.asSQLName)<\(value)"
+        case .smallerOrEqualInteger(field: let field, than: let value):
+            "\(field.asSQLName)<=\(value)"
+        case .greaterInteger(field: let field, than: let value):
+            "\(field.asSQLName)>\(value)"
+        case .greaterOrEqualInteger(field: let field, than: let value):
+            "\(field.asSQLName)>=\(value)"
+        case .equalBoolean(field: let field, value: let value):
+            "\(field.asSQLName)=\(value)"
+        case .similarText(field: let field, template: let template, wildcard: let wildcard):
             field.asSQLName + " LIKE " + template.replacing(wildcard, with: "%").asSQLText
+        case .not(let condition):
+            "NOT \(condition.sql)"
         case .and(let conditions):
             "(" + conditions.map{ $0.sql }.joined(separator: " AND ") + ")"
         case .or(let conditions):

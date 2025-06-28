@@ -12,14 +12,14 @@ final class LinkTests: XCTestCase {
             table: "person",
             fields: [.renaming("name", to: "surname"), .field("prename")],
             condition: one {
-                compare(field: "prename", withValue: "Bert")
-                compare(field: "prename", withTemplate: "C*", usingWildcard: "*")
+                compare(textField: "prename", withValue: "Bert")
+                compare(textField: "prename", withTemplate: "C*", usingWildcard: "*")
                 all {
-                    compare(field: "name", withPotentialTemplate: "D*", usingWildcard: "*")
+                    compare(textField: "name", withPotentialTemplate: "D*", usingWildcard: "*")
                     if checkSurnameEndForD {
-                        compare(field: "name", withPotentialTemplate: "*n", usingWildcard: "*")
+                        compare(textField: "name", withPotentialTemplate: "*n", usingWildcard: "*")
                     }
-                    compare(field: "prename", withPotentialTemplate: "Ernie", usingWildcard: "*")
+                    compare(textField: "prename", withPotentialTemplate: "Ernie", usingWildcard: "*")
                 }
             },
             orderBy: [.field("name"), .fieldWithDirection("prename", .descending)]
@@ -86,8 +86,8 @@ final class LinkTests: XCTestCase {
             table: "person",
             fields: [.renaming("name", to: "surname"), .field("prename"), .field("age"), .field("member")],
             condition: one {
-                compare(field: "prename", withTemplate: "*o*", usingWildcard: "*")
-                compare(field: "name", withTemplate: "*o*", usingWildcard: "*")
+                compare(textField: "prename", withTemplate: "*o*", usingWildcard: "*")
+                compare(textField: "name", withTemplate: "*o*", usingWildcard: "*")
             },
             orderBy: [.field("name"), .fieldWithDirection("prename", .descending)]
         )
@@ -150,8 +150,8 @@ final class LinkTests: XCTestCase {
             table: "person",
             fields: [.renaming("name", to: "surname"), .field("prename"), .field("age"), .field("member")],
             condition: one {
-                compare(field: "prename", withTemplate: "*o*", usingWildcard: "*")
-                compare(field: "name", withTemplate: "*o*", usingWildcard: "*")
+                compare(textField: "prename", withTemplate: "*o*", usingWildcard: "*")
+                compare(textField: "name", withTemplate: "*o*", usingWildcard: "*")
             },
             orderBy: [.field("name"), .fieldWithDirection("prename", .descending)]
         )
