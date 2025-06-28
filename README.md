@@ -52,7 +52,7 @@ New output formats can easily be added, see the extensions for `SQLConvertible` 
 For testing a query, a simple database can be formulated as follows (for using JSON input see further below):
 
 ```swift
-let testDB = [
+let testDB: RelationalQueryDB = [
     "person": try relationalQueryTable(
         withFields: [
             ("prename", .TEXT),
@@ -136,7 +136,7 @@ Todd      | Wallace  | 27  | false
 It might be convenient to use JSON for the rows, so you can write:
 
 ```swift
-let testDB = [
+let testDB: RelationalQueryDB = [
     "person": try relationalQueryTable(
         withFields: [
             ("prename", .TEXT),
