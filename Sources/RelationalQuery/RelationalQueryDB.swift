@@ -209,7 +209,7 @@ public extension RelationalQuery {
     
 }
 
-public func relationalQueryDBTable(
+public func relationalQueryTable(
     withFields fieldsDefinitions: RelationalQueryDBFieldDefinitions,
     withContentFromValues genericRows: [[String:Any]]? = nil
 ) throws -> RelationalQueryDBTable {
@@ -234,20 +234,20 @@ public func relationalQueryDBTable(
     return (fieldsDefinitions, rows)
 }
 
-public func relationalQueryDBTable(
+public func relationalQueryTable(
     withFields fieldsDefinitions: RelationalQueryDBFieldDefinitions,
     withContentFromJSONText jsonText: String? = nil
 ) throws -> RelationalQueryDBTable {
     guard let jsonText else { return RelationalQueryDBTable(fieldsDefinitions: fieldsDefinitions, rows: []) }
     guard let jsonData = jsonText.data(using: .utf8) else { throw RelationalQueryError("could not convert JSON string to Data") }
     let json = try JSONSerialization.jsonObject(with: jsonData)
-    return try relationalQueryDBTable(withFields: fieldsDefinitions, withContentFromParsedJSON: json)
+    return try relationalQueryTable(withFields: fieldsDefinitions, withContentFromParsedJSON: json)
 }
 
-public func relationalQueryDBTable(
+public func relationalQueryTable(
     withFields fieldsDefinitions: RelationalQueryDBFieldDefinitions,
     withContentFromParsedJSON json: Any? = nil
 ) throws -> RelationalQueryDBTable {
     guard let genericRows = json as? [[String: Any]] else { throw RelationalQueryError("JSON has wrong structure") }
-    return try relationalQueryDBTable(withFields: fieldsDefinitions,     withContentFromValues: genericRows)
+    return try relationalQueryTable(withFields: fieldsDefinitions,     withContentFromValues: genericRows)
 }

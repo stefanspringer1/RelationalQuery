@@ -53,7 +53,7 @@ For testing a query, a simple database can be formulated as follows:
 
 ```swift
 let testDB: RelationalQueryDB = [
-    "person": try relationalQueryDBTable(
+    "person": try relationalQueryTable(
         withFields: [
             "prename": .TEXT,
             "name": .TEXT,
@@ -132,7 +132,7 @@ It might be convenient to use JSON data for the rows, so you can write:
 
 ```swift
 let testDB: RelationalQueryDB = [
-    "person": try relationalQueryDBTable(
+    "person": try relationalQueryTable(
         withFields: [
             "prename": .TEXT,
             "name": .TEXT,
@@ -166,12 +166,12 @@ let testDB: RelationalQueryDB = [
 ]
 ```
 
-You can use `relationalQueryDBTable(withFields:withContentFromParsedJSON:)` if the JSON has already been parsed or built by some other method.
+You can use `relationalQueryTable(withFields:withContentFromParsedJSON:)` if the JSON has already been parsed or built by some other method.
 
 ---
 
 **NOTE:**
 
-If you mistakenly call `relationalQueryDBTable(withFields:withContentFromParsedJSON:)` with the JSON text to parse in the second argument, you will get the error “JSON has wrong structure”, then use `relationalQueryDBTable(withFields:withContentFromJSONText:)` instead.
+If you mistakenly call `relationalQueryTable(withFields:withContentFromParsedJSON:)` with the JSON text to parse in the second argument, you will get the error “JSON has wrong structure”, then use `relationalQueryTable(withFields:withContentFromJSONText:)` instead.
 
 ---

@@ -55,7 +55,7 @@ final class LinkTests: XCTestCase {
     func testQueryTest() throws {
         
         let testDB: RelationalQueryDB = [
-            "person": try relationalQueryDBTable(
+            "person": try relationalQueryTable(
                 withFields: [
                     "prename": .TEXT,
                     "name": .TEXT,
@@ -123,7 +123,7 @@ final class LinkTests: XCTestCase {
     func testQueryTestWithJSON() throws {
         
         let testDB: RelationalQueryDB = [
-            "person": try relationalQueryDBTable(
+            "person": try relationalQueryTable(
                 withFields: [
                     "prename": .TEXT,
                     "name": .TEXT,
