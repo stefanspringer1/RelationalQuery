@@ -55,10 +55,10 @@ For testing a query, a simple database can be formulated as follows:
 let testDB: RelationalQueryDB = [
     "person": try relationalQueryTable(
         withFields: [
-            "prename": .TEXT,
-            "name": .TEXT,
-            "age": .INTEGER,
-            "member": .BOOLEAN,
+            ("prename", .TEXT),
+            ("name", .TEXT),
+            ("age", .INTEGER),
+            ("member", .BOOLEAN),
         ],
         withContentFromValues:
         [
@@ -134,10 +134,10 @@ It might be convenient to use JSON data for the rows, so you can write:
 let testDB: RelationalQueryDB = [
     "person": try relationalQueryTable(
         withFields: [
-            "prename": .TEXT,
-            "name": .TEXT,
-            "age": .INTEGER,
-            "member": .BOOLEAN,
+            ("prename", .TEXT),
+            ("name", .TEXT),
+            ("age", .INTEGER),
+            ("member", .BOOLEAN),
         ],
         withContentFromJSONText: """
         [

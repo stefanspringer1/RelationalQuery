@@ -20,7 +20,7 @@ public enum RelationalQueryDBValue: CustomStringConvertible, Decodable {
     }
 }
 
-public typealias RelationalQueryDBFieldDefinitions = [String:RelationalQueryDBDataType]
+public typealias RelationalQueryDBFieldDefinitions = [(String,RelationalQueryDBDataType)]
 public typealias RelationalQueryDBRow = [String:RelationalQueryDBValue]
 public typealias RelationalQueryDBTable = (RelationalQueryDBFieldDefinitions,[RelationalQueryDBRow])
 public typealias RelationalQueryDB = [String:RelationalQueryDBTable]
@@ -155,7 +155,7 @@ public extension RelationalQueryResultOrder {
 public extension RelationalQuery {
     
     func execute(forDatabase testDB: RelationalQueryDB) -> RelationalQueryDBResult {
-        guard let (orinalFieldNames,allRows) = testDB[self.table] else { return RelationalQueryDBResult(fields: [String]()) }
+        guard let (originalFieldNames,allRows) = testDB[self.table] else { return RelationalQueryDBResult(fields: [String]()) }
         var filteredAndSorted: [RelationalQueryDBRow]
         if let condition = self.condition {
             filteredAndSorted = allRows.filter { condition.check(row: $0) }
@@ -195,11 +195,13 @@ public extension RelationalQuery {
                 result.append(newRow)
             }
         } else {
-            fieldNames = orinalFieldNames.map { $0.0 }
+            fieldNames = originalFieldNames.map { $0.0 }
             for originalRow in filteredAndSorted {
                 var newRow = RelationalQueryDBResultRow()
-                for (field, value) in originalRow.sorted(by: { $0.key < $1.key }) {
-                    newRow[field] = value
+                for fieldName in fieldNames {
+                    if let value = originalRow[fieldName] {
+                        newRow[fieldName] = value
+                    }
                 }
                 result.append(newRow)
             } 
@@ -214,13 +216,14 @@ public func relationalQueryTable(
     withContentFromValues genericRows: [[String:Any]]? = nil
 ) throws -> RelationalQueryDBTable {
     guard let genericRows else { return RelationalQueryDBTable(fieldsDefinitions: fieldsDefinitions, rows: []) }
+    let booleanFields = fieldsDefinitions.filter{ $0.1 == .BOOLEAN }.map{ $0.0 }
     var rows = [RelationalQueryDBRow]()
     for genericRow in genericRows {
         var row = RelationalQueryDBRow()
         for (key,value) in genericRow {
             if let text = value as? String { row[key] = .text(text) }
             else if let int = value as? Int {
-                if fieldsDefinitions[key] == .BOOLEAN {
+                if booleanFields.contains(key) {
                     row[key] = .boolean(int != 0)
                 } else {
                     row[key] = .integer(int)
