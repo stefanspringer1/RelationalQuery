@@ -133,7 +133,7 @@ Schneider | Loretta  | 23  | false
 Todd      | Wallace  | 27  | false 
 ```
 
-It might be convenient to use JSON data for the rows, so you can write:
+It might be convenient to use JSON for the rows, so you can write:
 
 ```swift
 let testDB: RelationalQueryDB = [
