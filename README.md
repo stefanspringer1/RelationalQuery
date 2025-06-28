@@ -9,20 +9,18 @@ This library is published under the Apache License v2.0 with Runtime Library Exc
 Example:
 
 ```swift
-let checkSurnameEndForD = true
-
 let query = RelationalQuery(
     table: "person",
     fields: [.renaming("name", to: "surname"), .field("prename")],
     condition: one {
-        compare(field: "prename", withValue: "Bert")
-        compare(field: "prename", withTemplate: "C*", usingWildcard: "*")
+        compare(textField: "prename", withValue: "Bert")
+        compare(textField: "prename", withTemplate: "C*", usingWildcard: "*")
         all {
-            compare(field: "name", withPotentialTemplate: "D*", usingWildcard: "*")
+            compare(textField: "name", withPotentialTemplate: "D*", usingWildcard: "*")
             if checkSurnameEndForD {
-                compare(field: "name", withPotentialTemplate: "*n", usingWildcard: "*")
+                compare(textField: "name", withPotentialTemplate: "*n", usingWildcard: "*")
             }
-            compare(field: "prename", withPotentialTemplate: "Ernie", usingWildcard: "*")
+            compare(textField: "prename", withPotentialTemplate: "Ernie", usingWildcard: "*")
         }
     },
     orderBy: [.field("name"), .fieldWithDirection("prename", .descending)]
@@ -51,32 +49,33 @@ New output formats can easily be added, see the extensions for `SQLConvertible` 
 
 ## Tests
 
-For testing a query, a simple test database can be formulated as follows:
+For testing a query, a simple database can be formulated as follows:
 
 ```swift
 let testDB: RelationalQueryDB = [
-    "person": (
-        ["prename", "name"],
+    "person": try relationalQueryDBTable(
+        withFieldDefinitions: ["prename": .TEXT, "name": .TEXT, "age": .INTEGER, "member": .BOOLEAN],
+        withContentFromValues:
         [
-            ["prename": "Gwen", "name": "Portillo"], 
-            ["prename": "Wallace", "name": "Todd"], 
-            ["prename": "Zariah", "name": "Curtis"], 
-            ["prename": "Muhammad", "name": "Avery"], 
-            ["prename": "Ahmad", "name": "Johnson"], 
-            ["prename": "Taylor", "name": "Hodges"],
-            ["prename": "Emma", "name": "Hodges"], 
-            ["prename": "Kaydence", "name": "McClain"], 
-            ["prename": "Marleigh", "name": "Holland"], 
-            ["prename": "Brady", "name": "Brandt"], 
-            ["prename": "Loretta", "name": "Mejia"], 
-            ["prename": "Alayah", "name": "McGee"], 
-            ["prename": "Wallace", "name": "Weber"], 
-            ["prename": "Loretta", "name": "Schneider"], 
-            ["prename": "Alayah", "name": "McGee"], 
-            ["prename": "Atticus", "name": "Allison"], 
-            ["prename": "Edison", "name": "Beltran"], 
-            ["prename": "Atticus", "name": "Allison"], 
-            ["prename": "Kaydence", "name": "Portillo"], 
+            ["prename": "Gwen", "name": "Portillo", "age": 45, "member": false],
+            ["prename": "Wallace", "name": "Todd", "age": 27, "member": false],
+            ["prename": "Zariah", "name": "Curtis", "age": 63, "member": false],
+            ["prename": "Muhammad", "name": "Avery", "age": 33, "member": true],
+            ["prename": "Ahmad", "name": "Johnson", "age": 26, "member": true],
+            ["prename": "Taylor", "name": "Hodges", "age": 21, "member": false],
+            ["prename": "Emma", "name": "Hodges", "age": 55, "member": false],
+            ["prename": "Kaydence", "name": "McClain", "age": 37, "member": false],
+            ["prename": "Marleigh", "name": "Holland", "age": 40, "member": true],
+            ["prename": "Brady", "name": "Brandt", "age": 34, "member": false],
+            ["prename": "Loretta", "name": "Mejia", "age": 51, "member": false],
+            ["prename": "Alayah", "name": "McGee", "age": 66, "member": false],
+            ["prename": "Wallace", "name": "Weber", "age": 44, "member": true],
+            ["prename": "Loretta", "name": "Schneider", "age": 23, "member": false],
+            ["prename": "Alayah", "name": "McGee", "age": 23, "member": false],
+            ["prename": "Atticus", "name": "Allison", "age": 50, "member": true],
+            ["prename": "Edison", "name": "Beltran", "age": 49, "member": false],
+            ["prename": "Atticus", "name": "Allison", "age": 47, "member": true],
+            ["prename": "Kaydence", "name": "Portillo", "age": 30, "member": false],
         ]
     )
 ]
@@ -87,10 +86,10 @@ With e.g. the following abstract query:
 ```swift
 let query = RelationalQuery(
     table: "person",
-    fields: [.renaming("name", to: "surname"), .field("prename")],
+    fields: [.renaming("name", to: "surname"), .field("prename"), .field("age"), .field("member")],
     condition: one {
-        compare(field: "prename", withTemplate: "*o*", usingWildcard: "*")
-        compare(field: "name", withTemplate: "*o*", usingWildcard: "*")
+        compare(textField: "prename", withTemplate: "*o*", usingWildcard: "*")
+        compare(textField: "name", withTemplate: "*o*", usingWildcard: "*")
     },
     orderBy: [.field("name"), .fieldWithDirection("prename", .descending)]
 )
@@ -99,7 +98,7 @@ let query = RelationalQuery(
 We can apply the query to our test database and print the result as follows:
 
 ```swift
-let result = query.execute(forTestDatabase: testDB)
+let result = query.execute(forDatabase: testDB)
 print(result)
 ```
 
@@ -108,51 +107,61 @@ print(result)
 The following is printed:
 
 ```text
-surname   | prename 
-----------|---------
-Allison   | Atticus 
-Allison   | Atticus 
-Beltran   | Edison  
-Hodges    | Taylor  
-Hodges    | Emma    
-Holland   | Marleigh
-Johnson   | Ahmad   
-Mejia     | Loretta 
-Portillo  | Kaydence
-Portillo  | Gwen    
-Schneider | Loretta 
-Todd      | Wallace 
+surname   | prename  | age | member
+----------|----------|-----|-------
+Allison   | Atticus  | 47  | true  
+Allison   | Atticus  | 50  | true  
+Beltran   | Edison   | 49  | false 
+Hodges    | Taylor   | 21  | false 
+Hodges    | Emma     | 55  | false 
+Holland   | Marleigh | 40  | true  
+Johnson   | Ahmad    | 26  | true  
+Mejia     | Loretta  | 51  | false 
+Portillo  | Kaydence | 30  | false 
+Portillo  | Gwen     | 45  | false 
+Schneider | Loretta  | 23  | false 
+Todd      | Wallace  | 27  | false 
 ```
 
 It might be convenient to use JSON data for the rows, so you can write:
 
 ```swift
 let testDB: RelationalQueryDB = [
-    "person": (
-        ["prename", "name"],
-        try RelationalQueryDBRows(fromJSON: """
+    "person": try relationalQueryDBTable(
+        withFieldDefinitions: ["prename": .TEXT, "name": .TEXT, "age": .INTEGER, "member": .BOOLEAN],
+        withContentFromJSONText: """
         [
-            {"prename": "Gwen", "name": "Portillo"},
-            {"prename": "Wallace", "name": "Todd"}, 
-            {"prename": "Zariah", "name": "Curtis"}, 
-            {"prename": "Muhammad", "name": "Avery"}, 
-            {"prename": "Ahmad", "name": "Johnson"}, 
-            {"prename": "Taylor", "name": "Hodges"},
-            {"prename": "Emma", "name": "Hodges"}, 
-            {"prename": "Kaydence", "name": "McClain"}, 
-            {"prename": "Marleigh", "name": "Holland"}, 
-            {"prename": "Brady", "name": "Brandt"}, 
-            {"prename": "Loretta", "name": "Mejia"}, 
-            {"prename": "Alayah", "name": "McGee"}, 
-            {"prename": "Wallace", "name": "Weber"}, 
-            {"prename": "Loretta", "name": "Schneider"}, 
-            {"prename": "Alayah", "name": "McGee"}, 
-            {"prename": "Atticus", "name": "Allison"}, 
-            {"prename": "Edison", "name": "Beltran"}, 
-            {"prename": "Atticus", "name": "Allison"}, 
-            {"prename": "Kaydence", "name": "Portillo"}
+            {"prename": "Gwen", "name": "Portillo", "age": 45, "member": false},
+            {"prename": "Wallace", "name": "Todd", "age": 27, "member": false}, 
+            {"prename": "Zariah", "name": "Curtis", "age": 63, "member": false}, 
+            {"prename": "Muhammad", "name": "Avery", "age": 33, "member": true}, 
+            {"prename": "Ahmad", "name": "Johnson", "age": 26, "member": true}, 
+            {"prename": "Taylor", "name": "Hodges", "age": 21, "member": false},
+            {"prename": "Emma", "name": "Hodges", "age": 55, "member": false}, 
+            {"prename": "Kaydence", "name": "McClain", "age": 37, "member": false}, 
+            {"prename": "Marleigh", "name": "Holland", "age": 40, "member": true}, 
+            {"prename": "Brady", "name": "Brandt", "age": 34, "member": false}, 
+            {"prename": "Loretta", "name": "Mejia", "age": 51, "member": false}, 
+            {"prename": "Alayah", "name": "McGee", "age": 66, "member": false}, 
+            {"prename": "Wallace", "name": "Weber", "age": 44, "member": true}, 
+            {"prename": "Loretta", "name": "Schneider", "age": 23, "member": false}, 
+            {"prename": "Alayah", "name": "McGee", "age": 23, "member": false}, 
+            {"prename": "Atticus", "name": "Allison", "age": 50, "member": true}, 
+            {"prename": "Edison", "name": "Beltran", "age": 49, "member": false}, 
+            {"prename": "Atticus", "name": "Allison", "age": 47, "member": true}, 
+            {"prename": "Kaydence", "name": "Portillo", "age": 30, "member": false}
         ]
-        """)
+        """
     )
 ]
 ```
+
+You can use `relationalQueryDBTable(withFieldDefinitions:withContentFromParsedJSON:)` if the JSON has already been parsed or built by some other method.
+
+---
+
+**NOTE:**
+
+If you mistakenly call `relationalQueryDBTable(withFieldDefinitions:withContentFromParsedJSON:)` with the JSON text to parse in the second argument, you will get the error “JSON has wrong structure”, then use `relationalQueryDBTable(withFieldDefinitions:withContentFromJSONText:)` instead.
+
+---
