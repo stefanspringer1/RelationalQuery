@@ -6,6 +6,7 @@ extension String {
         "\"" + self.replacing("\"", with: "\"\"") + "\""
     }
     
+    // TODO: option to differentiate bteween databases, for MS Access escape "[" and "]" via "\[" and "\]"
     var asSQLText: String {
         "'" + self.replacing("'", with: "''") + "'"
     }

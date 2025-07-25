@@ -65,6 +65,7 @@ extension RelationalQueryCondition: PostgRESTConvertible {
         case .equalBoolean(let field, let value):
             "\(field.urlEscaped)\(topLevel ? "=" : ".")eq.\(value)"
         case .similarText(field: let field, template: let value, wildcard: let wildcard):
+            // TODO: escape * via %2A, but at the same time!
             "\(field.urlEscaped)\(topLevel ? "=" : ".")like.\(value.replacing(wildcard, with: "*").urlEscaped)"
         case .not(let condition):
             "not\(topLevel ? "=" : ".")\(condition.postgrest(topLevel: false))"
