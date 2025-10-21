@@ -87,25 +87,30 @@ final class LinkTests: XCTestCase {
             )
         ]
         
-        let query = RelationalQuery(
-            table: "person",
-            fields: [
-                .renaming("name", to: "surname"),
-                .field("prename"),
-                .field("age"),
-                .field("member")
-            ],
-            condition: one {
-                compare(textField: "prename", withTemplate: "*o*", usingWildcard: "*")
-                compare(textField: "name", withTemplate: "*o*", usingWildcard: "*")
-            },
-            orderBy: [.field("name"), .fieldWithDirection("prename", .descending)]
-        )
-        
-        let result = query.execute(forRelationalQueryDatabase: testDB)
-        
-        XCTAssertEqual(
-            result.description,
+        do {
+            let query = RelationalQuery(
+                table: "person",
+                fields: [
+                    .renaming("name", to: "surname"),
+                    .field("prename"),
+                    .field("age"),
+                    .field("member")
+                ],
+                condition: one {
+                    compare(textField: "prename", withTemplate: "*o*", usingWildcard: "*")
+                    compare(textField: "name", withTemplate: "*o*", usingWildcard: "*")
+                },
+                orderBy: [.field("name"), .fieldWithDirection("prename", .descending)]
+            )
+            
+            XCTAssertEqual(query.sql, """
+                SELECT "name" AS "surname","prename","age","member" FROM "person" WHERE ("prename" LIKE '%o%' OR "name" LIKE '%o%') ORDER BY "name","prename" DESC
+                """)
+            
+            let result = query.execute(forRelationalQueryDatabase: testDB)
+            
+            XCTAssertEqual(
+                result.description,
             """
             surname   | prename  | age | member
             ----------|----------|-----|-------
@@ -122,7 +127,42 @@ final class LinkTests: XCTestCase {
             Schneider | Loretta  | 23  | false 
             Todd      | Wallace  | 27  | false 
             """
-        )
+            )
+        }
+        
+        do {
+            let query = RelationalQuery(
+                table: "person",
+                fields: [
+                    .renaming("name", to: "surname"),
+                    .field("prename"),
+                    .field("age"),
+                    .field("member")
+                ],
+                condition: all {
+                    compare(textField: "name", withValue: "Portillo")
+                    compare(textField: "prename", withTemplate: "%", usingWildcard: "%")
+                },
+                orderBy: [.field("name"), .fieldWithDirection("prename", .descending)]
+            )
+            
+            XCTAssertEqual(query.sql, """
+                SELECT "name" AS "surname","prename","age","member" FROM "person" WHERE ("name"='Portillo' AND "prename" LIKE '%') ORDER BY "name","prename" DESC
+                """)
+            
+            let result = query.execute(forRelationalQueryDatabase: testDB)
+            
+            XCTAssertEqual(
+                result.description,
+            """
+            surname  | prename  | age | member
+            ---------|----------|-----|-------
+            Portillo | Kaydence | 30  | false 
+            Portillo | Gwen     | 45  | false 
+            """
+            )
+        }
+        
     }
     
     func testQueryTestWithJSON() throws {
