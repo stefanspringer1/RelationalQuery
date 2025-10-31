@@ -3,7 +3,11 @@ import Foundation
 extension String {
     
     var asSQLName: String {
-        "\"" + self.replacing("\"", with: "\"\"") + "\""
+        if self.contains(/^[a-zA-Z_][a-zA-Z0-9_]*$/) {
+            self
+        } else {
+            "\"" + self.replacing("\"", with: "\"\"") + "\""
+        }
     }
     
     // TODO: option to differentiate bteween databases, for MS Access escape "[" and "]" via "\[" and "\]"

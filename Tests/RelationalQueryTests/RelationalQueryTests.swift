@@ -27,7 +27,7 @@ final class LinkTests: XCTestCase {
         
         XCTAssertEqual(
             query.sql,
-            #"SELECT "name" AS "surname","prename" FROM "person" WHERE ("prename"='Bert' OR "prename" LIKE 'C%' OR ("name" LIKE 'D%' AND "name" LIKE '%n' AND "prename"='Ernie')) ORDER BY "name","prename" DESC"#
+            #"SELECT name AS surname,prename FROM person WHERE (prename='Bert' OR prename LIKE 'C%' OR (name LIKE 'D%' AND name LIKE '%n' AND prename='Ernie')) ORDER BY name,prename DESC"#
         )
         
         XCTAssertEqual(
@@ -104,7 +104,7 @@ final class LinkTests: XCTestCase {
             )
             
             XCTAssertEqual(query.sql, """
-                SELECT "name" AS "surname","prename","age","member" FROM "person" WHERE ("prename" LIKE '%o%' OR "name" LIKE '%o%') ORDER BY "name","prename" DESC
+                SELECT name AS surname,prename,age,member FROM person WHERE (prename LIKE '%o%' OR name LIKE '%o%') ORDER BY name,prename DESC
                 """)
             
             let result = query.execute(forRelationalQueryDatabase: testDB)
@@ -147,7 +147,7 @@ final class LinkTests: XCTestCase {
             )
             
             XCTAssertEqual(query.sql, """
-                SELECT "name" AS "surname","prename","age","member" FROM "person" WHERE ("name"='Portillo' AND "prename" LIKE '%') ORDER BY "name","prename" DESC
+                SELECT name AS surname,prename,age,member FROM person WHERE (name='Portillo' AND prename LIKE '%') ORDER BY name,prename DESC
                 """)
             
             let result = query.execute(forRelationalQueryDatabase: testDB)
