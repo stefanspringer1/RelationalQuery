@@ -10,7 +10,7 @@ extension RelationalField: PostgRESTConvertible {
         switch self {
         case .field(let name):
             name.urlEscaped
-        case .renaming(let name, to: let newName):
+        case .renamingField(name: let name, to: let newName):
             newName.urlEscaped + ":" + name.urlEscaped
         }
     }

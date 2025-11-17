@@ -7,15 +7,15 @@ public enum RelationalQueryDBDataType {
 }
 
 public enum RelationalQueryDBValue: CustomStringConvertible, Decodable {
-    case text(_: String)
-    case integer(_: Int)
-    case boolean(_: Bool)
+    case text(value: String)
+    case integer(value: Int)
+    case boolean(value: Bool)
     
     public var description: String {
         switch self {
-        case .text(let value): value
-        case .integer(let value): value.description
-        case .boolean(let value): value.description
+        case .text(value: let value): value
+        case .integer(value: let value): value.description
+        case .boolean(value: let value): value.description
         }
     }
 }
@@ -176,7 +176,7 @@ public extension RelationalQuery {
                     switch field {
                     case .field(let name):
                         newFieldNames.append(name)
-                    case .renaming(_, to: let newName):
+                    case .renamingField(_, to: let newName):
                         newFieldNames.append(newName)
                     }
                 }
@@ -188,7 +188,7 @@ public extension RelationalQuery {
                     switch field {
                     case .field(let name):
                         newRow[name] = originalRow[name]
-                    case .renaming(let name, to: let newName):
+                    case .renamingField(name: let name, to: let newName):
                         newRow[newName] = originalRow[name]
                     }
                 }
@@ -221,15 +221,15 @@ public func relationalQueryTable(
     for genericRow in genericRows {
         var row = RelationalQueryDBRow()
         for (key,value) in genericRow {
-            if let text = value as? String { row[key] = .text(text) }
+            if let text = value as? String { row[key] = .text(value: text) }
             else if let int = value as? Int {
                 if booleanFields.contains(key) {
-                    row[key] = .boolean(int != 0)
+                    row[key] = .boolean(value: int != 0)
                 } else {
-                    row[key] = .integer(int)
+                    row[key] = .integer(value: int)
                 }
             }
-            else if let bool = value as? Bool { row[key] = .boolean(bool) }
+            else if let bool = value as? Bool { row[key] = .boolean(value: bool) }
             else { throw RelationalQueryError("invalid value: \(value)") }
         }
         rows.append(row)

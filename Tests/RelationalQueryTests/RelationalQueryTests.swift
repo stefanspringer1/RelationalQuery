@@ -1,4 +1,5 @@
 import Foundation
+import Foundation
 import XCTest
 @testable import RelationalQuery
 
@@ -10,7 +11,7 @@ final class LinkTests: XCTestCase {
         
         let query = RelationalQuery(
             table: "person",
-            fields: [.renaming("name", to: "surname"), .field("prename")],
+            fields: [.renamingField(name: "name", to: "surname"), .field(name: "prename")],
             condition: one {
                 compare(textField: "prename", withValue: "Bert")
                 compare(textField: "prename", withTemplate: "C*", usingWildcard: "*")
@@ -22,7 +23,7 @@ final class LinkTests: XCTestCase {
                     compare(textField: "prename", withPotentialTemplate: "Ernie", usingWildcard: "*")
                 }
             },
-            orderBy: [.field("name"), .fieldWithDirection("prename", .descending)]
+            orderBy: [.field(name: "name"), .fieldWithDirection(name: "prename", direction: .descending)]
         )
         
         XCTAssertEqual(
@@ -38,18 +39,18 @@ final class LinkTests: XCTestCase {
     
     func testQueryTestRowCompare() throws {
         
-        let row1: RelationalQueryDBRow = ["prename": .text("Wallace"), "name": .text("Portillo")]
-        let row2: RelationalQueryDBRow = ["prename": .text("Gwen"), "name": .text("Todd")]
+        let row1: RelationalQueryDBRow = ["prename": .text(value: "Wallace"), "name": .text(value: "Portillo")]
+        let row2: RelationalQueryDBRow = ["prename": .text(value: "Gwen"), "name": .text(value: "Todd")]
         
         // sorting along "name":
-        XCTAssertEqual(RelationalQueryResultOrder.field("prename").compare(row1, with: row2), 1)
-        XCTAssertEqual(RelationalQueryResultOrder.fieldWithDirection("prename", .ascending).compare(row1, with: row2), 1)
-        XCTAssertEqual(RelationalQueryResultOrder.fieldWithDirection("prename", .descending).compare(row1, with: row2), -1)
+        XCTAssertEqual(RelationalQueryResultOrder.field(name: "prename").compare(row1, with: row2), 1)
+        XCTAssertEqual(RelationalQueryResultOrder.fieldWithDirection(name: "prename", direction: .ascending).compare(row1, with: row2), 1)
+        XCTAssertEqual(RelationalQueryResultOrder.fieldWithDirection(name: "prename", direction: .descending).compare(row1, with: row2), -1)
         
         // sorting along "prename":
-        XCTAssertEqual(RelationalQueryResultOrder.field("name").compare(row1, with: row2), -1)
-        XCTAssertEqual(RelationalQueryResultOrder.fieldWithDirection("name", .ascending).compare(row1, with: row2), -1)
-        XCTAssertEqual(RelationalQueryResultOrder.fieldWithDirection("name", .descending).compare(row1, with: row2), 1)
+        XCTAssertEqual(RelationalQueryResultOrder.field(name: "name").compare(row1, with: row2), -1)
+        XCTAssertEqual(RelationalQueryResultOrder.fieldWithDirection(name: "name", direction: .ascending).compare(row1, with: row2), -1)
+        XCTAssertEqual(RelationalQueryResultOrder.fieldWithDirection(name: "name", direction: .descending).compare(row1, with: row2), 1)
     }
     
     func testQueryTest() throws {
@@ -91,16 +92,16 @@ final class LinkTests: XCTestCase {
             let query = RelationalQuery(
                 table: "person",
                 fields: [
-                    .renaming("name", to: "surname"),
-                    .field("prename"),
-                    .field("age"),
-                    .field("member")
+                    .renamingField(name: "name", to: "surname"),
+                    .field(name: "prename"),
+                    .field(name: "age"),
+                    .field(name: "member")
                 ],
                 condition: one {
                     compare(textField: "prename", withTemplate: "*o*", usingWildcard: "*")
                     compare(textField: "name", withTemplate: "*o*", usingWildcard: "*")
                 },
-                orderBy: [.field("name"), .fieldWithDirection("prename", .descending)]
+                orderBy: [.field(name: "name"), .fieldWithDirection(name: "prename", direction: .descending)]
             )
             
             XCTAssertEqual(query.sql, """
@@ -134,16 +135,16 @@ final class LinkTests: XCTestCase {
             let query = RelationalQuery(
                 table: "person",
                 fields: [
-                    .renaming("name", to: "surname"),
-                    .field("prename"),
-                    .field("age"),
-                    .field("member")
+                    .renamingField(name: "name", to: "surname"),
+                    .field(name: "prename"),
+                    .field(name: "age"),
+                    .field(name: "member")
                 ],
                 condition: all {
                     compare(textField: "name", withValue: "Portillo")
                     compare(textField: "prename", withTemplate: "%", usingWildcard: "%")
                 },
-                orderBy: [.field("name"), .fieldWithDirection("prename", .descending)]
+                orderBy: [.field(name: "name"), .fieldWithDirection(name: "prename", direction: .descending)]
             )
             
             XCTAssertEqual(query.sql, """
@@ -204,16 +205,16 @@ final class LinkTests: XCTestCase {
         let query = RelationalQuery(
             table: "person",
             fields: [
-                .renaming("name", to: "surname"),
-                .field("prename"),
-                .field("age"),
-                .field("member")
+                .renamingField(name: "name", to: "surname"),
+                .field(name: "prename"),
+                .field(name: "age"),
+                .field(name: "member")
             ],
             condition: one {
                 compare(textField: "prename", withTemplate: "*o*", usingWildcard: "*")
                 compare(textField: "name", withTemplate: "*o*", usingWildcard: "*")
             },
-            orderBy: [.field("name"), .fieldWithDirection("prename", .descending)]
+            orderBy: [.field(name: "name"), .fieldWithDirection(name: "prename", direction: .descending)]
         )
         
         let result = query.execute(forRelationalQueryDatabase: testDB)
@@ -283,7 +284,7 @@ final class LinkTests: XCTestCase {
                 compare(textField: "prename", withTemplate: "*o*", usingWildcard: "*")
                 compare(textField: "name", withTemplate: "*o*", usingWildcard: "*")
             },
-            orderBy: [.field("name"), .fieldWithDirection("prename", .descending)]
+            orderBy: [.field(name: "name"), .fieldWithDirection(name: "prename", direction: .descending)]
         )
         
         let result = query.execute(forRelationalQueryDatabase: testDB)

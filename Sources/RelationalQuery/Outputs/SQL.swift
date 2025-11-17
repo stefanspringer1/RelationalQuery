@@ -6,15 +6,15 @@ extension RelationalField: SQLConvertible {
     
     public var sql: String {
         switch self {
-        case .field(let name):
+        case .field(name: let name):
             name.asSQLName
-        case .renaming(let name, to: let newName):
+        case .renamingField(name: let name, to: let newName):
             name.asSQLName + " AS " + newName.asSQLName
         }
     }
     
 }
-//
+
 extension RelationalQueryOrderDirection: SQLConvertible {
 
     public var sql: String {

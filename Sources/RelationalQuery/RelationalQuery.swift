@@ -1,8 +1,8 @@
 import Foundation
 
 public enum RelationalField: Sendable, Codable {
-    case field(_ name: String)
-    case renaming(_ name: String, to: String)
+    case field(name: String)
+    case renamingField(name: String, to: String)
 }
 
 public enum RelationalQueryOrderDirection: Sendable, Codable {
@@ -11,8 +11,8 @@ public enum RelationalQueryOrderDirection: Sendable, Codable {
 }
 
 public enum RelationalQueryResultOrder: Sendable, Codable {
-    case field(_ name: String)
-    case fieldWithDirection(_ name: String, _ direction: RelationalQueryOrderDirection)
+    case field(name: String)
+    case fieldWithDirection(name: String, direction: RelationalQueryOrderDirection)
 }
 
 public indirect enum RelationalQueryCondition: Sendable, Codable {
@@ -24,9 +24,9 @@ public indirect enum RelationalQueryCondition: Sendable, Codable {
     case greaterOrEqualInteger(field: String, than: Int)
     case equalBoolean(field: String, value: Bool)
     case similarText(field: String, template: String, wildcard: String)
-    case not(_ condition: RelationalQueryCondition)
-    case and(_ conditions: [RelationalQueryCondition])
-    case or(_ conditions: [RelationalQueryCondition])
+    case not(condition: RelationalQueryCondition)
+    case and(conditions: [RelationalQueryCondition])
+    case or(conditions: [RelationalQueryCondition])
 }
 
 public func compare(textField field: String, withValue value: String) -> RelationalQueryCondition {

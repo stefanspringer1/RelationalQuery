@@ -1,9 +1,9 @@
 public func one(@RelationalQueryConditionsBuilder builder: () -> [RelationalQueryCondition]) -> RelationalQueryCondition {
-    .or(builder())
+    .or(conditions: builder())
 }
 
 public func all(@RelationalQueryConditionsBuilder builder: () -> [RelationalQueryCondition]) -> RelationalQueryCondition {
-    .and(builder())
+    .and(conditions: builder())
 }
 
 @resultBuilder
