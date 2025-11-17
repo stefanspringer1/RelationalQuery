@@ -1,21 +1,21 @@
 import Foundation
 
-public enum RelationalField: Sendable {
+public enum RelationalField: Sendable, Codable {
     case field(_ name: String)
     case renaming(_ name: String, to: String)
 }
 
-public enum RelationalQueryOrderDirection: Sendable {
+public enum RelationalQueryOrderDirection: Sendable, Codable {
     case ascending
     case descending
 }
 
-public enum RelationalQueryResultOrder: Sendable {
+public enum RelationalQueryResultOrder: Sendable, Codable {
     case field(_ name: String)
     case fieldWithDirection(_ name: String, _ direction: RelationalQueryOrderDirection)
 }
 
-public indirect enum RelationalQueryCondition: Sendable {
+public indirect enum RelationalQueryCondition: Sendable, Codable {
     case equalText(field: String, value: String)
     case equalInteger(field: String, value: Int)
     case smallerInteger(field: String, than: Int)
@@ -54,7 +54,7 @@ public func compare(textField: String, withPotentialTemplate potentialTemplate: 
     }
 }
 
-public struct RelationalQuery: Sendable {
+public struct RelationalQuery: Sendable, Codable {
     
     public let table: String
     public let fields: [RelationalField]? // if not set, get all fields
