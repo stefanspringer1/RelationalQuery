@@ -11,19 +11,21 @@ Example:
 ```swift
 let query = RelationalQuery(
     table: "person",
-    fields: [.renaming("name", to: "surname"), .field("prename")],
+    fields: [.renamingField(name: "name", to: "surname"), .field(name: "prename")],
     condition: one {
         compare(textField: "prename", withValue: "Bert")
         compare(textField: "prename", withTemplate: "C*", usingWildcard: "*")
         all {
-            compare(textField: "name", withPotentialTemplate: "D*", usingWildcard: "*")
+            notOne {
+                compare(textField: "name", withPotentialTemplate: "D*", usingWildcard: "*")
+            }
             if checkSurnameEndForD {
                 compare(textField: "name", withPotentialTemplate: "*n", usingWildcard: "*")
             }
             compare(textField: "prename", withPotentialTemplate: "Ernie", usingWildcard: "*")
         }
     },
-    orderBy: [.field("name"), .fieldWithDirection("prename", .descending)]
+    orderBy: [.field(name: "name"), .fieldWithDirection(name: "prename", direction: .descending)]
 )
 
 print("SQL:\n")

@@ -6,6 +6,24 @@ public func all(@RelationalQueryConditionsBuilder builder: () -> [RelationalQuer
     .and(conditions: builder())
 }
 
+public func notOne(@RelationalQueryConditionsBuilder builder: () -> [RelationalQueryCondition]) -> RelationalQueryCondition {
+    let conditions = builder()
+    if conditions.count == 1 {
+        return .not(condition: conditions.first!)
+    } else {
+        return .not(condition: .or(conditions: conditions))
+    }
+}
+
+public func notAll(@RelationalQueryConditionsBuilder builder: () -> [RelationalQueryCondition]) -> RelationalQueryCondition {
+    let conditions = builder()
+    if conditions.count == 1 {
+        return .not(condition: conditions.first!)
+    } else {
+        return .not(condition: .and(conditions: conditions))
+    }
+}
+
 @resultBuilder
 public struct RelationalQueryConditionsBuilder {
     

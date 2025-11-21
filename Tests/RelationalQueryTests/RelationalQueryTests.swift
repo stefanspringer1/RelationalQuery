@@ -16,7 +16,9 @@ final class RelationalQueryTests: XCTestCase {
                 compare(textField: "prename", withValue: "Bert")
                 compare(textField: "prename", withTemplate: "C*", usingWildcard: "*")
                 all {
-                    compare(textField: "name", withPotentialTemplate: "D*", usingWildcard: "*")
+                    notOne {
+                        compare(textField: "name", withPotentialTemplate: "D*", usingWildcard: "*")
+                    }
                     if checkSurnameEndForD {
                         compare(textField: "name", withPotentialTemplate: "*n", usingWildcard: "*")
                     }
@@ -52,10 +54,14 @@ final class RelationalQueryTests: XCTestCase {
                           "and" : {
                             "conditions" : [
                               {
-                                "similarText" : {
-                                  "field" : "name",
-                                  "template" : "D*",
-                                  "wildcard" : "*"
+                                "not" : {
+                                  "condition" : {
+                                    "similarText" : {
+                                      "field" : "name",
+                                      "template" : "D*",
+                                      "wildcard" : "*"
+                                    }
+                                  }
                                 }
                               },
                               {
@@ -114,12 +120,12 @@ final class RelationalQueryTests: XCTestCase {
         
         XCTAssertEqual(
             query.sql,
-            #"SELECT name AS surname,prename FROM person WHERE (prename='Bert' OR prename LIKE 'C%' OR (name LIKE 'D%' AND name LIKE '%n' AND prename='Ernie')) ORDER BY name,prename DESC"#
+            #"SELECT name AS surname,prename FROM person WHERE (prename='Bert' OR prename LIKE 'C%' OR (NOT name LIKE 'D%' AND name LIKE '%n' AND prename='Ernie')) ORDER BY name,prename DESC"#
         )
         
         XCTAssertEqual(
             query.postgrest,
-            #"person?select=surname:name,prename&or=(prename.eq.Bert,prename.like.C*,and(name.like.D*,name.like.*n,prename.eq.Ernie))&order=name,prename.desc"#
+            #"person?select=surname:name,prename&or=(prename.eq.Bert,prename.like.C*,and(not.name.like.D*,name.like.*n,prename.eq.Ernie))&order=name,prename.desc"#
         )
     }
     
