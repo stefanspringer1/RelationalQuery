@@ -3,9 +3,9 @@ import Foundation
 import XCTest
 @testable import RelationalQuery
 
-final class LinkTests: XCTestCase {
+final class RelationalQueryTests: XCTestCase {
     
-    func testQueryConstruction1() {
+    func testQueryConstructionAndJSON() throws {
         
         let checkSurnameEndForD = true
         
@@ -25,6 +25,92 @@ final class LinkTests: XCTestCase {
             },
             orderBy: [.field(name: "name"), .fieldWithDirection(name: "prename", direction: .descending)]
         )
+        
+        let asJSON = try JSONEncoder().encode(query)
+        
+        if let json = try? JSONSerialization.jsonObject(with: asJSON, options: .mutableContainers),
+           let jsonData = try? JSONSerialization.data(withJSONObject: json, options: [.prettyPrinted, .sortedKeys]) {
+            XCTAssertEqual(String(data: jsonData, encoding: .utf8)!, """
+                {
+                  "condition" : {
+                    "or" : {
+                      "conditions" : [
+                        {
+                          "equalText" : {
+                            "field" : "prename",
+                            "value" : "Bert"
+                          }
+                        },
+                        {
+                          "similarText" : {
+                            "field" : "prename",
+                            "template" : "C*",
+                            "wildcard" : "*"
+                          }
+                        },
+                        {
+                          "and" : {
+                            "conditions" : [
+                              {
+                                "similarText" : {
+                                  "field" : "name",
+                                  "template" : "D*",
+                                  "wildcard" : "*"
+                                }
+                              },
+                              {
+                                "similarText" : {
+                                  "field" : "name",
+                                  "template" : "*n",
+                                  "wildcard" : "*"
+                                }
+                              },
+                              {
+                                "equalText" : {
+                                  "field" : "prename",
+                                  "value" : "Ernie"
+                                }
+                              }
+                            ]
+                          }
+                        }
+                      ]
+                    }
+                  },
+                  "fields" : [
+                    {
+                      "renamingField" : {
+                        "name" : "name",
+                        "to" : "surname"
+                      }
+                    },
+                    {
+                      "field" : {
+                        "name" : "prename"
+                      }
+                    }
+                  ],
+                  "order" : [
+                    {
+                      "field" : {
+                        "name" : "name"
+                      }
+                    },
+                    {
+                      "fieldWithDirection" : {
+                        "direction" : {
+                          "descending" : {
+
+                          }
+                        },
+                        "name" : "prename"
+                      }
+                    }
+                  ],
+                  "table" : "person"
+                }
+                """)
+        }
         
         XCTAssertEqual(
             query.sql,
