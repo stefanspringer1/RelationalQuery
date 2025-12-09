@@ -1,6 +1,6 @@
 # RelationalQuery
 
-This [Swift](https://www.swift.org/) library allows to construct relational database queries of a simple form in an abstract way with output to various formats, and for the same abstractly defined queries to formulate tests in a simple way without using a "real" database.
+This library allows to construct relational database queries of a simple form in an abstract way with output to various formats, and for the same abstractly defined queries to formulate tests in a simple way without using a "real" database.
 
 This library is published under the Apache License v2.0 with Runtime Library Exception.
 
