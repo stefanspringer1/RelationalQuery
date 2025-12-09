@@ -54,6 +54,7 @@ public func compare(textField: String, withPotentialTemplate potentialTemplate: 
     }
 }
 
+@available(*, deprecated, message: "this package is deprecated, use the repository https://github.com/struktaris/RelationalQuery instead and note the version number being reset to 1.0.0")
 public struct RelationalQuery: Sendable, Codable {
     
     public let table: String
